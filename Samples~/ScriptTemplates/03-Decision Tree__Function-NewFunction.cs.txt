@@ -1,0 +1,19 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+// Replace function template type with the return type of your function
+public class #SCRIPTNAME# : Function<object>
+{
+    public override void Initialise<T>(T metaData)
+    {
+        base.Initialise(mob);
+        // Insert any logic about storing metaData passed through every node of the tree
+    }
+    
+    // Change type of this function to what you need it to be
+    public override object Invoke()
+    {
+        #NOTRIM#
+    }
+}

@@ -1,0 +1,17 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class #SCRIPTNAME# : BaseConditionDecision
+{
+    public override void Initialise<T>(T metaData)
+    {
+        base.Initialise(mob);
+        // Insert any logic about storing metaData passed through every node of the tree
+    }
+
+    public override DecisionTreeNode GetBranch()
+    {
+        #NOTRIM#
+    }
+}

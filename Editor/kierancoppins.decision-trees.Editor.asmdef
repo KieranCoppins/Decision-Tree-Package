@@ -1,0 +1,17 @@
+{
+    "name": "kierancoppins.decision-trees.Editor",
+    "references": [
+        "UnityEditor",
+        "kierancoppins.decision-trees",
+        "kierancoppins.generic-helpers"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

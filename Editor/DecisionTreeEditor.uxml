@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/Editor/AI/DecisionTreeEditor.uss?fileID=7433441132597879392&amp;guid=9b1573d8b81c56d4c842fe7ed2240f47&amp;type=3#DecisionTreeEditor" />
+    <uie:Toolbar>
+        <uie:ToolbarMenu display-tooltip-when-elided="true" />
+    </uie:Toolbar>
+    <SplitView fixed-pane-initial-dimension="300">
+        <ui:VisualElement name="left-panel" style="margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
+            <ui:Label text="Inspector" display-tooltip-when-elided="true" name="Title" style="margin-left: 0; padding-left: 15px; padding-right: 0;" />
+            <InspectorView style="margin-left: 15px; margin-right: 15px; margin-top: 15px; margin-bottom: 15px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="right-panel">
+            <DecisionTreeView focusable="true" name="TreeView" style="flex-grow: 1;">
+                <ui:Label text="Tree View" display-tooltip-when-elided="true" name="Title" style="margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 15px; padding-right: 0; padding-top: 5px;" />
+            </DecisionTreeView>
+        </ui:VisualElement>
+    </SplitView>
+</ui:UXML>

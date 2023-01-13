@@ -1,0 +1,203 @@
+#selection-border {
+    border-left-color: rgb(3, 219, 191);
+    border-right-color: rgb(3, 219, 191);
+    border-top-color: rgb(3, 219, 191);
+    border-bottom-color: rgb(3, 219, 191);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+:hover > #selection-border {
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+}
+
+:selected > #selection-border {
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+    border-left-color: rgb(2, 137, 120);
+    border-right-color: rgb(2, 137, 120);
+    border-top-color: rgb(2, 137, 120);
+    border-bottom-color: rgb(2, 137, 120);
+}
+
+:selected:hover > #selection-border {
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+    border-left-color: rgb(3, 219, 191);
+    border-right-color: rgb(3, 219, 191);
+    border-top-color: rgb(3, 219, 191);
+    border-bottom-color: rgb(3, 219, 191);
+}
+
+#node-border {
+    background-color: rgb(56, 56, 56);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    width: 100%;
+}
+
+#input {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#output {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.port {
+}
+
+.node {
+    min-width: 150px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    align-items: center;
+}
+
+#title {
+    width: 100%;
+    -unity-text-align: middle-center;
+    font-size: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgb(31, 31, 31);
+    border-right-color: rgb(31, 31, 31);
+    border-top-color: rgb(31, 31, 31);
+    border-bottom-color: rgb(31, 31, 31);
+    -unity-font-style: bold;
+    padding-left: 20px;
+    padding-right: 20px;
+    color: rgb(34, 34, 34);
+}
+
+.action #title {
+    background-color: rgb(145, 250, 62);
+}
+
+.decision #title {
+    background-color: rgb(62, 150, 250);
+}
+
+.function #title {
+    background-color: rgb(250, 243, 62);
+}
+
+.root #title {
+    background-color: rgb(238, 62, 250);
+}
+
+#description {
+    font-size: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    white-space: normal;
+    -unity-text-align: upper-left;
+    width: 100%;
+}
+
+#error {
+    -unity-text-align: middle-center;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-color: rgb(250, 69, 62);
+    color: rgb(34, 34, 34);
+    -unity-font-style: bold-and-italic;
+    font-size: 10px;
+    white-space: normal;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+#error-label {
+    white-space: normal;
+}
+
+#description-container {
+    overflow: hidden;
+    width: 100%;
+    max-width: 250px;
+}
+
+#top {
+    align-items: center;
+}
+
+#state-border {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.running #state-border {
+    border-left-color: rgb(46, 255, 0);
+    border-right-color: rgb(46, 255, 0);
+    border-top-color: rgb(46, 255, 0);
+    border-bottom-color: rgb(46, 255, 0);
+    border-left-width: 5px;
+    border-right-width: 5px;
+    border-top-width: 5px;
+    border-bottom-width: 5px;
+}
+
+.finished #state-border {
+    border-left-color: rgba(107, 147, 63, 255);
+    border-right-color: rgba(107, 147, 63, 255);
+    border-top-color: rgba(107, 147, 63, 255);
+    border-bottom-color: rgba(107, 147, 63, 255);
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+}
+
+.interrupted #state-border {
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-left-color: rgba(147, 127, 63, 255);
+    border-right-color: rgba(147, 127, 63, 255);
+    border-top-color: rgba(147, 127, 63, 255);
+    border-bottom-color: rgba(147, 127, 63, 255);
+}

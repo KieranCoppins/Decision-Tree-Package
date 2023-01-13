@@ -1,0 +1,22 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class #SCRIPTNAME# : F_Condition
+{
+    public override void Initialise<T>(T metaData)
+    {
+        base.Initialise(mob);
+        // Insert any logic about storing metaData passed through every node of the tree
+    }
+
+    public override bool Invoke()
+    {
+        #NOTRIM#
+    }
+
+    public override string GetSummary(BaseNodeView nodeView)
+    {
+        return "";
+    }
+}

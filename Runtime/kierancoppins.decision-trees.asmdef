@@ -1,0 +1,16 @@
+{
+    "name": "kierancoppins.decision-trees",
+    "references": [
+        "UnityEngine",
+        "kierancoppins.generic-helpers"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
