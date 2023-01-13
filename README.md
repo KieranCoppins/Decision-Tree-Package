@@ -1,4 +1,4 @@
-[banner](docs~/Banner.png)
+[banner](Docs~/Banner.png)
 
 # Decision-Tree-Package
 
