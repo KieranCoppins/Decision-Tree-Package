@@ -27,15 +27,6 @@ public class DecisionTreeView : GraphView
         graphViewChanged += OnGraphViewChanged;
     }
 
-    UnityEditor.Experimental.GraphView.Node FindNodeView(ScriptableObject node)
-    {
-        DecisionTreeNode dtNode = node as DecisionTreeNode;
-        if (dtNode)
-            return GetNodeByGuid(dtNode.guid) as DecisionTreeNodeView;
-
-        return null;
-    }
-
     public void PopulateView(DecisionTree tree)
     {
         this.tree = tree;

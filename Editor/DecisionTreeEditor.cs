@@ -3,6 +3,7 @@ using System;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.Callbacks;
+using UnityEditorInternal.VR;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,11 +12,20 @@ public class DecisionTreeEditor : EditorWindow
 {
 
     InspectorView inspectorView;
-    DecisionTreeView treeView;
+    protected DecisionTreeView treeView;
 
     [MenuItem("Window/AI/Decision Tree Editor")]
     public static void ShowExample()
     {
+        // Get all types that have the type of DecisionTreeEditor
+        var types = TypeCache.GetTypesDerivedFrom<DecisionTreeEditor>();
+        foreach (var type in types)
+        {
+            var customWnd = GetWindow(type);
+            customWnd.titleContent = new GUIContent("Decision Tree Editor");
+            return;
+        }
+        // Otherwise we had no assets so just load this one
         DecisionTreeEditor wnd = GetWindow<DecisionTreeEditor>();
         wnd.titleContent = new GUIContent("Decision Tree Editor");
     }
