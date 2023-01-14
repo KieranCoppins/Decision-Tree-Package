@@ -1,12 +1,12 @@
 {
     "name": "com.kierancoppins.decision-trees",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "displayName": "Decision Trees",
     "description": "Create decision trees using this custom editor for your AI!",
     "unity": "2021.3",
     "unityRelease": "6f1",
     "dependencies": {
-        "com.kcoppins.generic-helpers": "1.0.0"
+        "com.kierancoppins.generic-helpers": "1.0.0"
     },
     "samples": [
         {
