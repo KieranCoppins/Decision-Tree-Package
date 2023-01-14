@@ -1,5 +1,5 @@
 {
-    "name": "com.kcoppins.decision-trees",
+    "name": "com.kierancoppins.decision-trees",
     "version": "1.0.0",
     "displayName": "Decision Trees",
     "description": "Create decision trees using this custom editor for your AI!",
@@ -25,7 +25,7 @@
         "url": "https://kierancoppins.com"
     },
     "publishConfig": {
-        "registry": "https://npm.pkg.github.com/@kcoppins"
+        "registry": "https://npm.pkg.github.com/@kierancoppins"
     },
     "repository": "https://github.com/KieranCoppins/Decision-Tree-Package.git",
     "changelogUrl": "https://github.com/KieranCoppins/Decision-Tree-Package/blob/master/CHANGELOG.md",
