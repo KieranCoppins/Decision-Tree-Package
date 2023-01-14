@@ -7,5 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## 1.0.0 - W.I.P
+## 1.0.1
+
+### Fixed
+
+- Generic helpers dependency name
+
+## 1.0.0
 - The first initial release of the Decision Tree Package
