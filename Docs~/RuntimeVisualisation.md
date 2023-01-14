@@ -1,4 +1,4 @@
-![banner](RuntimeVisualisation.png)
+![banner](Resources/RuntimeVisualisation.png)
 # Runtime Visualisation
 The decision tree visual editor does support runtime debugging. It allows for programmers to click on Game Objects that are running the decision tree and highlight which nodes are currently running.
 
