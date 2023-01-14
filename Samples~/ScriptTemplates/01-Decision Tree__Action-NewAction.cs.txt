@@ -11,7 +11,7 @@ public class #SCRIPTNAME# : Action
 
     public override void Initialise<T>(T metaData)
     {
-        base.Initialise(mob);
+        base.Initialise(metaData);
         // Insert any logic about storing metaData passed through every node of the tree
     }
 
