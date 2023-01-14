@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GetDataFromObject : F_Condition
+public class GetDataFromObject : Function<bool>
 {
     private DTRunner _dtRunner;
 
