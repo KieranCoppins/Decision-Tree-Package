@@ -1,24 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-9219208578482761484
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7406cd093d0314544839204f8c2e86a0, type: 3}
-  m_Name: GetPosition
-  m_EditorClassIdentifier: 
-  Guid: ce2d679377c92ba4daed44528171b52d
-  PositionalData:
-    serializedVersion: 2
-    x: -287
-    y: 239
-    width: 256
-    height: 106
 --- !u!114 &-6870371642575577490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38,7 +19,7 @@ MonoBehaviour:
     y: 179
     width: 274
     height: 147
-  TrueNode: {fileID: 1377685876180935899}
+  TrueNode: {fileID: 9152401448206008432}
   FalseNode: {fileID: -671511868752389632}
   Condition: {fileID: -5849330012869866590}
 --- !u!114 &-5849330012869866590
@@ -99,8 +80,7 @@ MonoBehaviour:
   - {fileID: -6870371642575577490}
   - {fileID: -5849330012869866590}
   - {fileID: -671511868752389632}
-  - {fileID: 1377685876180935899}
-  - {fileID: -9219208578482761484}
+  - {fileID: 9152401448206008432}
   Inputs:
   - InputGUID: cc4dfbea287e30b42b344473ae1cb9c9
     InputPortName: main
@@ -114,14 +94,10 @@ MonoBehaviour:
     InputPortName: main
     OutputGUID: 4e3c07b92a7732a48b97e89f773f615a
     OutputPortName: main
-  - InputGUID: 9d8c1c6026e2c6646aa967697c417f4b
+  - InputGUID: 0b156dcd35cf8a949addff435c50ac88
     InputPortName: main
     OutputGUID: f76fe2f6e92c8b44baa389b4a98beb5d
     OutputPortName: TRUE
-  - InputGUID: 9d8c1c6026e2c6646aa967697c417f4b
-    InputPortName: GetPosition
-    OutputGUID: ce2d679377c92ba4daed44528171b52d
-    OutputPortName: Output
 --- !u!114 &1019196323504941523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,7 +118,7 @@ MonoBehaviour:
     width: 0
     height: 0
   Child: {fileID: -6870371642575577490}
---- !u!114 &1377685876180935899
+--- !u!114 &9152401448206008432
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -151,15 +127,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b844b6bca0a88f1429cb6beb5e4844eb, type: 3}
-  m_Name: MultiAction
+  m_Script: {fileID: 11500000, guid: c604f7ba42743f44b9589b4bb6afd252, type: 3}
+  m_Name: DebugLogAction
   m_EditorClassIdentifier: 
-  Guid: 9d8c1c6026e2c6646aa967697c417f4b
+  Guid: 0b156dcd35cf8a949addff435c50ac88
   PositionalData:
     serializedVersion: 2
-    x: -142
-    y: 428
+    x: -109
+    y: 406
     width: 256
     height: 106
   _flags: 4
-  GetPosition: {fileID: -9219208578482761484}
