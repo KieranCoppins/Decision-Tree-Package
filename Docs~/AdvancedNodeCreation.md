@@ -22,7 +22,7 @@ If you want your node to take additional function parameters you can create an a
 class ABasicAction : Action 
 {
     // A reference to the function node
-    Function<Vector2> GetPosition { get; set; }
+    [HideInInspector] [SerializeField] Function<Vector2> GetPosition;
 
     public ABasicAction() : base()
     {
@@ -38,7 +38,7 @@ class ABasicAction : Action
 
 This will tell the visual editor to create a node with another input port of type `Function<Vector2>`. This means that you can plug in any other function node which has the return type of Vector2. Also note that the name of the parameter will also be the label of the input port of the node.
 
-You will also need to store a reference to the function node so you can call it later in the execute function. The reference is very flexible, it can be either a field or a property and have any access modifier you want on it. The only restriction is the name of the parameter in the constructor should match exactly to the name of the reference.
+You will also need to store a reference to the function node so you can call it later in the execute function. The reference must be serialized or you'll have to re-add it after editor restart. To serialize a field in Unity you can either make it public (All public fields are serialized in Unity) or you can use the `SerializeField` attribute. Serialized fields will automatically become visible in the inspector. If you want to hide it you can also add the `HideInInspector` attribute.
 
 Now since this node technically has another child, we need to update our clone, initialise & get children functions to include this new node. These a rather simple by:
 

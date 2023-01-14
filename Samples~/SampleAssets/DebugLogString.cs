@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class DebugLogString : Action
 {
-    [SerializeField] string textToPrint;
+    [SerializeField] private string _textToPrint;
     public override IEnumerator Execute()
     {
-        Debug.Log(textToPrint);
+        Debug.Log(_textToPrint);
         yield return null;
     }
 }

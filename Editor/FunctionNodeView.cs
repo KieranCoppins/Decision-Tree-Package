@@ -13,19 +13,17 @@ public class FunctionNodeView : BaseNodeView
         Port port = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, GenericHelpers.GetGenericType(function));
         port.portName = "Output";
         port.name = "Output";
-        outputPorts.Add("Output", port);
+        OutputPorts.Add("Output", port);
         outputContainer.Add(port);
-        //port.style.flexDirection = FlexDirection.ColumnReverse;
-
         AddToClassList("function");
     }
 
     void CreateInputPorts()
     {
-        if (node is RootNode)
+        if (Node is RootNode)
             return;
 
-        var constructors = node.GetType().GetConstructors();
+        var constructors = Node.GetType().GetConstructors();
         foreach (var constructor in constructors)
         {
             if (constructor.GetParameters().Length > 0)
@@ -35,9 +33,8 @@ public class FunctionNodeView : BaseNodeView
                     Port port = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, parameter.ParameterType);
                     port.portName = parameter.Name;
                     port.name = parameter.Name;
-                    inputPorts.Add(parameter.Name, port);
+                    InputPorts.Add(parameter.Name, port);
                     inputContainer.Add(port);
-                    //port.style.flexDirection = FlexDirection.Column;
                 }
             }
         }

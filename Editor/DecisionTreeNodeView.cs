@@ -1,15 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor.Experimental.GraphView;
-using UnityEngine.UIElements;
 
 public class DecisionTreeNodeView : BaseNodeView
 {
 
     public DecisionTreeNodeView(DecisionTreeNode node) : base(node)
     {
-
         CreateInputPorts();
         CreateOutputPorts();
         StyleClassAssignment();
@@ -17,32 +12,25 @@ public class DecisionTreeNodeView : BaseNodeView
 
     void StyleClassAssignment()
     {
-        if (node is Action)
-        {
+        if (Node is Action)
             AddToClassList("action");
-        }
-        else if (node is Decision)
-        {
+        else if (Node is Decision)
             AddToClassList("decision");
-        }
-        else if (node is RootNode)
-        {
+        else if (Node is RootNode)
             AddToClassList("root");
-        }
     }
 
     void CreateInputPorts()
     {
-        if (node is RootNode)
+        if (Node is RootNode)
             return;
 
         Port port = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, typeof(bool));
         port.portName = "Entry";
         port.name = "main";
-        inputPorts.Add("main", port);
+        InputPorts.Add("main", port);
         inputContainer.Add(port);
-        //port.style.flexDirection = FlexDirection.Column;
-        var constructors = node.GetType().GetConstructors();
+        var constructors = Node.GetType().GetConstructors();
         foreach(var constructor in constructors)
         {
             if (constructor.GetParameters().Length > 0)
@@ -52,9 +40,8 @@ public class DecisionTreeNodeView : BaseNodeView
                     port = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, parameter.ParameterType);
                     port.portName = parameter.Name;
                     port.name = parameter.Name;
-                    inputPorts.Add(parameter.Name, port);
+                    InputPorts.Add(parameter.Name, port);
                     inputContainer.Add(port);
-                    //port.style.flexDirection = FlexDirection.Column;
                 }
             }
         }
@@ -62,35 +49,32 @@ public class DecisionTreeNodeView : BaseNodeView
 
     void CreateOutputPorts()
     {
-        if (node is Action)
+        if (Node is Action)
         {
 
         }
-        else if (node is Decision)
+        else if (Node is Decision)
         {
             Port port = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
             port.portName = "TRUE";
             port.name = "TRUE";
-            outputPorts.Add("TRUE", port);
+            OutputPorts.Add("TRUE", port);
             outputContainer.Add(port);
-            //port.style.flexDirection = FlexDirection.ColumnReverse;
 
 
             port = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
             port.name = "FALSE";
             port.portName = "FALSE";
-            outputPorts.Add("FALSE", port);
+            OutputPorts.Add("FALSE", port);
             outputContainer.Add(port);
-            //port.style.flexDirection = FlexDirection.ColumnReverse;
         }
-        else if (node is RootNode)
+        else if (Node is RootNode)
         {
             Port port = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(bool));
             port.name = "main";
             port.portName = "";
-            outputPorts.Add("main", port);
+            OutputPorts.Add("main", port);
             outputContainer.Add(port);
-            //port.style.flexDirection = FlexDirection.ColumnReverse;
         }
     }
 }

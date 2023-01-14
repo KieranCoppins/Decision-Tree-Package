@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UIElements;
 using UnityEditor;
 
@@ -18,7 +16,7 @@ public class InspectorView : VisualElement
 
         UnityEngine.Object.DestroyImmediate(editor);
 
-        editor = Editor.CreateEditor(nodeView.node);
+        editor = Editor.CreateEditor(nodeView.Node);
 
         IMGUIContainer container = new(() => { editor.OnInspectorGUI(); });
         Add(container);

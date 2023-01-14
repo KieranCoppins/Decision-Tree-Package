@@ -9,27 +9,18 @@ using UnityEngine.UIElements;
 [CreateAssetMenu(menuName = "Decision Tree/Decision Tree")]
 public class DecisionTree : ScriptableObject
 {
-    [HideInInspector] public RootNode root;
+    [HideInInspector] public RootNode Root;
 
     /// Editor Values
     // A list of nodes for our editor, they don't have to be linked to the tree
-    [HideInInspector] public List<DecisionTreeEditorNodeBase> nodes = new List<DecisionTreeEditorNodeBase>();
-    [HideInInspector] public List<InputOutputPorts> inputs = new List<InputOutputPorts>();
+    [HideInInspector] public List<DecisionTreeEditorNodeBase> Nodes = new List<DecisionTreeEditorNodeBase>();
+    [HideInInspector] public List<InputOutputPorts> Inputs = new List<InputOutputPorts>();
 
-    public Action Run()
-    {
-        return root.MakeDecision() as Action;
-    }
+    public Action Run() => Root.MakeDecision() as Action;
 
-    public virtual void Initialise<T>(T metaData)
-    {
-        root.Initialise(metaData);
-    }
+    public virtual void Initialise<T>(T metaData) => Root.Initialise(metaData);
 
-    public List<DecisionTreeEditorNodeBase> GetChildren(DecisionTreeEditorNodeBase node)
-    {
-        return node.GetChildren();
-    }
+    public List<DecisionTreeEditorNodeBase> GetChildren(DecisionTreeEditorNodeBase node) => node.GetChildren();
 
     public void Traverse(DecisionTreeEditorNodeBase node, System.Action<DecisionTreeEditorNodeBase> visiter)
     {
@@ -46,39 +37,26 @@ public class DecisionTree : ScriptableObject
         DecisionTree tree = Instantiate(this);
         if (name != null)
             tree.name = name;
-        tree.root = root.Clone() as RootNode;
-        tree.nodes = new List<DecisionTreeEditorNodeBase>();
-        Traverse(tree.root, (n) =>
+        tree.Root = Root.Clone() as RootNode;
+        tree.Nodes = new List<DecisionTreeEditorNodeBase>();
+        Traverse(tree.Root, (n) =>
         {
-            tree.nodes.Add(n);
+            tree.Nodes.Add(n);
         });
+        Debug.Log(tree.Nodes.Count);
         return tree;
     }
 
     /// Editor Functions
 
-    public DecisionTreeEditorNodeBase CreateNode(System.Type type, Vector2 creationPos)
+    public DecisionTreeEditorNodeBase CreateNode(Type type, Vector2 creationPos)
     {
-        DecisionTreeEditorNodeBase node = ScriptableObject.CreateInstance(type) as DecisionTreeEditorNodeBase;
+        DecisionTreeEditorNodeBase node = CreateInstance(type) as DecisionTreeEditorNodeBase;
         node.name = type.Name;
-        node.guid = GUID.Generate().ToString();
-        node.positionalData.xMin = creationPos.x;
-        node.positionalData.yMin = creationPos.y;
-        nodes.Add(node);
-
-        AssetDatabase.AddObjectToAsset(node, this);
-        AssetDatabase.SaveAssets();
-        return node;
-    }
-
-    public DecisionTreeEditorNodeBase CreateNode(ScriptableObject scriptableObject, Vector2 creationPos)
-    {
-        DecisionTreeEditorNodeBase node = ScriptableObject.Instantiate(scriptableObject) as DecisionTreeEditorNodeBase;
-        node.name = scriptableObject.name;
-        node.guid = GUID.Generate().ToString();
-        node.positionalData.xMin = creationPos.x;
-        node.positionalData.yMin = creationPos.y;
-        nodes.Add(node);
+        node.Guid = GUID.Generate().ToString();
+        node.PositionalData.xMin = creationPos.x;
+        node.PositionalData.yMin = creationPos.y;
+        Nodes.Add(node);
 
         AssetDatabase.AddObjectToAsset(node, this);
         AssetDatabase.SaveAssets();
@@ -87,7 +65,7 @@ public class DecisionTree : ScriptableObject
 
     public void DeleteNode(DecisionTreeEditorNodeBase node)
     {
-        nodes.Remove(node);
+        Nodes.Remove(node);
         AssetDatabase.RemoveObjectFromAsset(node);
         AssetDatabase.SaveAssets();
     }
@@ -101,53 +79,34 @@ public enum DecisionTreeNodeRunningState
     Interrupted,
 }
 
-public delegate void DecisionTreeEditorNodeBaseOnValidate();
-
 public abstract class DecisionTreeEditorNodeBase : ScriptableObject
 {
     /// Editor Values
-    [HideInInspector] public string guid;
-    [HideInInspector] public Rect positionalData;
+    [HideInInspector] public string Guid;
+    [HideInInspector] public Rect PositionalData;
 
-    [HideInInspector] public DecisionTreeNodeRunningState nodeState;
+    public DecisionTreeNodeRunningState NodeState { get; set; }
 
-    public DecisionTreeEditorNodeBaseOnValidate OnValidateCallback { get; set; }
+    public System.Action OnValidateCallback { get; set; }
 
-    public virtual DecisionTreeEditorNodeBase Clone()
-    {
-        return Instantiate(this);
-    }
+    public virtual DecisionTreeEditorNodeBase Clone() => Instantiate(this);
 
     public virtual List<DecisionTreeEditorNodeBase> GetChildren() => null;
 
-    public virtual string GetTitle()
-    {
-        return GenericHelpers.SplitCamelCase(name);
-    }
+    public virtual string GetTitle() => GenericHelpers.SplitCamelCase(name);
 
-    public virtual string GetDescription(BaseNodeView nodeView)
-    {
-        return "This is the default description of a DecisionTreeEditorNode";
-    }
+    public virtual string GetDescription(BaseNodeView nodeView) => "This is the default description of a DecisionTreeEditorNode";
 
-    private void OnValidate()
-    { 
-        OnValidateCallback?.Invoke();
-    }
+    private void OnValidate() => OnValidateCallback?.Invoke();
 
-    public virtual void Initialise<T>(T metaData)
-    {
-
-    }
+    public virtual void Initialise<T>(T metaData) { }
 }
 
 public abstract class DecisionTreeNode : DecisionTreeEditorNodeBase
 {
 
-    public DecisionTreeNode()
-    {
+    public DecisionTreeNode() { }
 
-    }
     public abstract DecisionTreeNode MakeDecision();
 }
 
@@ -163,9 +122,8 @@ public abstract class Action : DecisionTreeNode
     }
 
     public ActionFlags Flags { get { return _flags; } protected set { _flags = value; } }
-    [EnumFlags]
-    [SerializeField]
-    ActionFlags _flags;
+
+    [EnumFlags] [SerializeField] private ActionFlags _flags;
 
     public Action()
     {
@@ -175,10 +133,7 @@ public abstract class Action : DecisionTreeNode
         Flags |= ActionFlags.Interruptable;
     }
 
-    public override DecisionTreeNode MakeDecision()
-    {
-        return this;
-    }
+    public override DecisionTreeNode MakeDecision() => this;
 
     /// <summary>
     /// Do this action
@@ -188,8 +143,9 @@ public abstract class Action : DecisionTreeNode
 
 public abstract class Decision : DecisionTreeNode
 {
-    [HideInInspector] public DecisionTreeNode trueNode;
-    [HideInInspector] public DecisionTreeNode falseNode;
+    [HideInInspector] public DecisionTreeNode TrueNode;
+
+    [HideInInspector] public DecisionTreeNode FalseNode;
 
     public abstract DecisionTreeNode GetBranch();
 
@@ -197,36 +153,27 @@ public abstract class Decision : DecisionTreeNode
     public override void Initialise<T>(T metaData)
     {
         base.Initialise(metaData);
-        trueNode.Initialise(metaData);
-        falseNode.Initialise(metaData);
+        TrueNode.Initialise(metaData);
+        FalseNode.Initialise(metaData);
     }
 
-    public override DecisionTreeNode MakeDecision()
-    {
-        return GetBranch().MakeDecision();
-    }
+    public override DecisionTreeNode MakeDecision() => GetBranch().MakeDecision();
 
     public override DecisionTreeEditorNodeBase Clone()
     {
         Decision node = Instantiate(this);
-        node.trueNode = (DecisionTreeNode)trueNode.Clone();
-        node.falseNode = (DecisionTreeNode)falseNode.Clone();
+        node.TrueNode = (DecisionTreeNode)TrueNode.Clone();
+        node.FalseNode = (DecisionTreeNode)FalseNode.Clone();
         return node;
     }
 
-    public override List<DecisionTreeEditorNodeBase> GetChildren()
-    {
-        return new () { trueNode, falseNode };
-    }
+    public override List<DecisionTreeEditorNodeBase> GetChildren() => new() { TrueNode, FalseNode };
 }
 
 // A base function node that can return a given value
 public abstract class Function<T> : DecisionTreeEditorNodeBase
 {
-    public Function()
-    {
-
-    }
+    public Function() { }
 
     // The condition to invoke
     public abstract T Invoke();
@@ -234,29 +181,23 @@ public abstract class Function<T> : DecisionTreeEditorNodeBase
 
 public abstract class F_Condition : Function<bool>
 {
-    public override string GetDescription(BaseNodeView nodeView)
-    {
-        return $"Returns true if {GetSummary(nodeView)}.";
-    }
 
     /// <summary>
     /// This should return a quick summary of what the function does. NOT THE DESCRIPTION. This will be used within the description of other nodes.
     /// </summary>
     /// <returns></returns>
     public abstract string GetSummary(BaseNodeView nodeView);
+    public override string GetDescription(BaseNodeView nodeView) => $"Returns true if {GetSummary(nodeView)}.";
 }
 
 
 public abstract class F_LogicGate : F_Condition
 {
-    public F_Condition A;
-    public F_Condition B;
+    [HideInInspector] [SerializeField] protected F_Condition A;
 
-    public F_LogicGate(F_Condition A, F_Condition B)
-    {
-        this.A = A;
-        this.B = B;
-    }
+    [HideInInspector][SerializeField] protected F_Condition B;
+
+    public F_LogicGate(F_Condition A, F_Condition B) { }
 
     public override void Initialise<T>(T metaData)
     {
@@ -273,119 +214,105 @@ public abstract class F_LogicGate : F_Condition
         return node;
     }
 
-    public override List<DecisionTreeEditorNodeBase> GetChildren()
-    {
-        return new() { A, B };
-    }
+    public override List<DecisionTreeEditorNodeBase> GetChildren() => new() { A, B };
 }
 
 ///  Editor classes that are also referenced in engine
 
-[System.Serializable]
+[Serializable]
 public class InputOutputPorts
 {
-    public string inputGUID;
-    public string inputPortName;
-    public string outputGUID;
-    public string outputPortName;
+    public string InputGUID;
+    public string InputPortName;
+    public string OutputGUID;
+    public string OutputPortName;
 
     public InputOutputPorts(string inputGUID, string inputPortName, string outputGUID, string outputPortName)
     {
-        this.inputGUID = inputGUID;
-        this.inputPortName = inputPortName;
-        this.outputGUID = outputGUID;
-        this.outputPortName = outputPortName;
+        InputGUID = inputGUID;
+        InputPortName = inputPortName;
+        OutputGUID = outputGUID;
+        OutputPortName = outputPortName;
     }
 
-    public override string ToString()
-    {
-        return $"In GUID: {inputGUID} | In Port: {inputPortName} | Out GUID: {outputGUID} | Out Port: {outputPortName}";
-    }
+    public override string ToString() => $"In GUID: {InputGUID} | In Port: {InputPortName} | Out GUID: {OutputGUID} | Out Port: {OutputPortName}";
 
-    public static bool operator !=(InputOutputPorts input, UnityEditor.Experimental.GraphView.Edge edge)
+    public static bool operator !=(InputOutputPorts input, Edge edge)
     {
         return !(input == edge);
     }
 
-    public static bool operator ==(InputOutputPorts input, UnityEditor.Experimental.GraphView.Edge edge)
+    public static bool operator ==(InputOutputPorts input, Edge edge)
     {
         BaseNodeView inputNodeView = edge.input.node as BaseNodeView;
         BaseNodeView outputNodeView = edge.output.node as BaseNodeView;
-        return input.inputGUID == inputNodeView.node.guid &&
-            input.inputPortName == edge.input.name &&
-            input.outputGUID == outputNodeView.node.guid &&
-            input.outputPortName == edge.output.name;
+        return input.InputGUID == inputNodeView.Node.Guid &&
+            input.InputPortName == edge.input.name &&
+            input.OutputGUID == outputNodeView.Node.Guid &&
+            input.OutputPortName == edge.output.name;
     }
 
     public bool Equals(InputOutputPorts input)
     {
-        return this.inputGUID == input.inputGUID && 
-            this.inputPortName == input.inputPortName && 
-            this.outputGUID == input.outputGUID && 
-            this.outputPortName == input.outputPortName;
+        return InputGUID == input.InputGUID && 
+            InputPortName == input.InputPortName && 
+            OutputGUID == input.OutputGUID && 
+            OutputPortName == input.OutputPortName;
     }
 
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as InputOutputPorts);
-    }
+    public override bool Equals(object obj) => Equals(obj as InputOutputPorts);
 
-    public override int GetHashCode()
-    {
-        return base.GetHashCode();
-    }
-
+    public override int GetHashCode() => base.GetHashCode();
 }
 
-public abstract class BaseNodeView : UnityEditor.Experimental.GraphView.Node
+public abstract class BaseNodeView : Node
 {
-    public System.Action<BaseNodeView> OnNodeSelected;
+    public Action<BaseNodeView> OnNodeSelected { get; set; }
 
-    public DecisionTreeEditorNodeBase node;
+    public DecisionTreeEditorNodeBase Node { get; }
 
-    public Dictionary<string, Port> inputPorts;
-    public Dictionary<string, Port> outputPorts;
+    public readonly Dictionary<string, Port> InputPorts = new ();
+    public readonly Dictionary<string, Port> OutputPorts = new ();
+    public readonly List<BaseNodeView> ConnectedNodes = new ();
 
-    public List<BaseNodeView> connectedNodes;
+    private readonly Label _descriptionLabel;
+    private readonly Label _errorLabel;
+    private readonly VisualElement _errorContainer;
 
-    readonly UnityEngine.UIElements.Label descriptionLabel;
-    readonly UnityEngine.UIElements.Label errorLabel;
-    readonly UnityEngine.UIElements.VisualElement errorContainer;
-
-    public string description {  
-        get { return descriptionLabel.text; } 
+    public string Description {  
+        get { return _descriptionLabel.text; } 
         
         set
         {
-            if (value != description)
+            if (value != Description)
             {
-                descriptionLabel.text = value;
+                _descriptionLabel.text = value;
 
                 // Update all nodes connected to this node until theres no change to be made
-                foreach (var node in connectedNodes)
+                foreach (var node in ConnectedNodes)
                 {
-                    node.description = node.node.GetDescription(node);
+                    node.Description = node.Node.GetDescription(node);
                 }
             }
         } 
     }
 
-    public string error
+    public string Error
     {
-        get { return errorLabel.text; }
+        get { return _errorLabel.text; }
         set
         {
             if (value == null || value == "")
             {
-                errorLabel.style.display = DisplayStyle.None;
-                errorContainer.style.display = DisplayStyle.None;
-                errorLabel.text = "";
+                _errorLabel.style.display = DisplayStyle.None;
+                _errorContainer.style.display = DisplayStyle.None;
+                _errorLabel.text = "";
             }
             else
             {
-                errorLabel.style.display = DisplayStyle.Flex;
-                errorContainer.style.display = DisplayStyle.Flex;
-                errorLabel.text = value;
+                _errorLabel.style.display = DisplayStyle.Flex;
+                _errorContainer.style.display = DisplayStyle.Flex;
+                _errorLabel.text = value;
             }
         }
     }
@@ -393,32 +320,28 @@ public abstract class BaseNodeView : UnityEditor.Experimental.GraphView.Node
 
     public BaseNodeView(DecisionTreeEditorNodeBase node) : base("Packages/com.kierancoppins.decision-trees/Editor/DecisionTreeNodeView.uxml")
     {
-        inputPorts = new Dictionary<string, Port>();
-        outputPorts = new Dictionary<string, Port>();
-        connectedNodes = new List<BaseNodeView>();
-
-        this.node = node;
-        node.OnValidateCallback += OnValidate;
-        this.title = node.GetTitle();
+        Node = node;
+        Node.OnValidateCallback += OnValidate;
+        title = Node.GetTitle();
 
         // Default our error to be hidden
-        errorLabel = this.Q<UnityEngine.UIElements.Label>("error-label");
-        errorContainer = this.Q<UnityEngine.UIElements.VisualElement>("error");
-        errorLabel.style.display = DisplayStyle.None;
-        errorContainer.style.display = DisplayStyle.None;
+        _errorLabel = this.Q<Label>("error-label");
+        _errorContainer = this.Q<VisualElement>("error");
+        _errorLabel.style.display = DisplayStyle.None;
+        _errorContainer.style.display = DisplayStyle.None;
 
-        descriptionLabel = this.Q<UnityEngine.UIElements.Label>("description");
-        this.description = node.GetDescription(this);
+        _descriptionLabel = this.Q<Label>("description");
+        Description = Node.GetDescription(this);
 
-        style.left = node.positionalData.xMin;
-        style.top = node.positionalData.yMin;
-        this.viewDataKey = node.guid;
+        style.left = Node.PositionalData.xMin;
+        style.top = Node.PositionalData.yMin;
+        viewDataKey = Node.Guid;
     }
 
     public override void SetPosition(Rect newPos)
     {
         base.SetPosition(newPos);
-        node.positionalData = newPos;
+        Node.PositionalData = newPos;
     }
 
     public override void OnSelected()
@@ -430,8 +353,8 @@ public abstract class BaseNodeView : UnityEditor.Experimental.GraphView.Node
 
     void OnValidate()
     {
-        title = node.GetTitle();
-        description = node.GetDescription(this);
+        title = Node.GetTitle();
+        Description = Node.GetDescription(this);
     }
 
     public void UpdateState()
@@ -443,7 +366,7 @@ public abstract class BaseNodeView : UnityEditor.Experimental.GraphView.Node
 
         if (Application.isPlaying)
         {
-            switch (node.nodeState)
+            switch (Node.NodeState)
             {
                 case DecisionTreeNodeRunningState.Running:
                     AddToClassList("running");

@@ -1,17 +1,18 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.Experimental.GraphView;
 using System.Linq;
-using UnityEngine.Windows;
 
 public class DecisionTreeView : GraphView
 {
-    public System.Action<BaseNodeView> OnNodeSelected;
+    public System.Action<BaseNodeView> OnNodeSelected { get; set; }
+
     public new class UxmlFactory : UxmlFactory<DecisionTreeView, UxmlTraits> { };
-    DecisionTree tree;
+
+    private DecisionTree _tree;
+
     public DecisionTreeView()
     {
         Insert(0, new GridBackground());
@@ -29,20 +30,20 @@ public class DecisionTreeView : GraphView
 
     public void PopulateView(DecisionTree tree)
     {
-        this.tree = tree;
+        _tree = tree;
         graphViewChanged -= OnGraphViewChanged;
         DeleteElements(graphElements);
         graphViewChanged += OnGraphViewChanged;
 
-        if (tree.root == null)
+        if (_tree.Root == null)
         {
-            tree.root = tree.CreateNode(typeof(RootNode), Vector2.zero) as RootNode;
-            EditorUtility.SetDirty(tree);
+            _tree.Root = _tree.CreateNode(typeof(RootNode), Vector2.zero) as RootNode;
+            EditorUtility.SetDirty(_tree);
             AssetDatabase.SaveAssets();
         }
 
         // Create node views
-        tree.nodes.ForEach(node =>
+        _tree.Nodes.ForEach(node =>
         {
             if (node is DecisionTreeNode)
                 CreateNodeView(node as DecisionTreeNode);
@@ -51,14 +52,17 @@ public class DecisionTreeView : GraphView
         });
 
         // Create edges
-        tree.inputs.ForEach(input =>
+        _tree.Inputs.ForEach(input =>
         {
-            var inputNode = GetNodeByGuid(input.inputGUID) as BaseNodeView;
-            var outputNode = GetNodeByGuid(input.outputGUID) as BaseNodeView;
-            Edge edge = outputNode.outputPorts[input.outputPortName].ConnectTo(inputNode.inputPorts[input.inputPortName]);
-            inputNode.connectedNodes.Add(outputNode);
-            outputNode.connectedNodes.Add(inputNode);
-            AddElement(edge);
+            var inputNode = GetNodeByGuid(input.InputGUID) as BaseNodeView;
+            var outputNode = GetNodeByGuid(input.OutputGUID) as BaseNodeView;
+            if (inputNode != null && outputNode != null)
+            {
+                Edge edge = outputNode.OutputPorts[input.OutputPortName].ConnectTo(inputNode.InputPorts[input.InputPortName]);
+                inputNode.ConnectedNodes.Add(outputNode);
+                outputNode.ConnectedNodes.Add(inputNode);
+                AddElement(edge);
+            }
         });
 
     }
@@ -91,37 +95,27 @@ public class DecisionTreeView : GraphView
 
     void CreateNode(System.Type type, Vector2 creationPos)
     {
-        DecisionTreeEditorNodeBase node = tree.CreateNode(type, creationPos);
+        DecisionTreeEditorNodeBase node = _tree.CreateNode(type, creationPos);
         if (node is DecisionTreeNode)
             CreateNodeView(node as DecisionTreeNode);
         else if (GenericHelpers.IsSubClassOfRawGeneric(typeof(Function<>), node.GetType()))
             CreateNodeView(node);
 
     }
-
-    void CreateNode(ScriptableObject scriptableObject, Vector2 creationPos)
-    {
-        DecisionTreeEditorNodeBase node = tree.CreateNode(scriptableObject, creationPos);
-        if (node is DecisionTreeNode)
-            CreateNodeView(node as DecisionTreeNode);
-        else if (GenericHelpers.IsSubClassOfRawGeneric(typeof(Function<>), node.GetType()))
-            CreateNodeView(node);
-    }
-
 
     public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
     {
         return ports.ToList().Where(endPort => endPort.direction != startPort.direction && endPort.node != startPort.node).ToList();
     }
 
-    void CreateNodeView(DecisionTreeNode node)
+    private void CreateNodeView(DecisionTreeNode node)
     {
         DecisionTreeNodeView nodeView = new(node);
         nodeView.OnNodeSelected = OnNodeSelected;
         AddElement(nodeView);
     }
 
-    void CreateNodeView(object node)
+    private void CreateNodeView(object node)
     {
         FunctionNodeView nodeView = new(node);
         nodeView.OnNodeSelected = OnNodeSelected;
@@ -135,40 +129,40 @@ public class DecisionTreeView : GraphView
             graphViewChange.elementsToRemove.ForEach(elem =>
             {
                 // Delete our node from our tree
-                BaseNodeView nodeView = elem as BaseNodeView;
-                if (nodeView != null)
+                if (elem is BaseNodeView)
                 {
-                    foreach(var node in nodeView.connectedNodes)
+                    BaseNodeView nodeView = elem as BaseNodeView;
+                    foreach (var node in nodeView.ConnectedNodes)
                     {
-                        node.connectedNodes.Remove(nodeView);
+                        node.ConnectedNodes.Remove(nodeView);
                     }
-                    tree.DeleteNode(nodeView.node);
+                    _tree.DeleteNode(nodeView.Node);
                 }
 
                 // If our element is an edge, delete the edge
-                Edge edge = elem as Edge;
-                if (edge != null)
+                if (elem is Edge)
                 {
+                    Edge edge = elem as Edge;
                     BaseNodeView inputNode = edge.input.node as BaseNodeView;
                     BaseNodeView outputNode = edge.output.node as BaseNodeView;
 
-                    Decision decisionNode = outputNode.node as Decision;
-                    if (decisionNode != null)
+                    if (outputNode.Node is Decision)
                     {
+                        Decision decisionNode = outputNode.Node as Decision;
                         if (edge.output.portName == "TRUE")
-                            decisionNode.trueNode = null;
+                            decisionNode.TrueNode = null;
                         else if (edge.output.portName == "FALSE")
-                            decisionNode.falseNode = null;
+                            decisionNode.FalseNode = null;
                         else
                             Debug.LogError("Decision node was set from an invalid output?!");
                     }
 
-                    inputNode.connectedNodes.Remove(outputNode);
-                    outputNode.connectedNodes.Remove(inputNode);
+                    inputNode.ConnectedNodes.Remove(outputNode);
+                    outputNode.ConnectedNodes.Remove(inputNode);
 
-                    tree.inputs = tree.inputs.Where((input) => input != edge).ToList();
+                    _tree.Inputs = _tree.Inputs.Where((input) => input != edge).ToList();
 
-                    var constructors = inputNode.node.GetType().GetConstructors();
+                    var constructors = inputNode.Node.GetType().GetConstructors();
                     foreach (var constructor in constructors)
                     {
                         if (constructor.GetParameters().Length > 0)
@@ -177,15 +171,15 @@ public class DecisionTreeView : GraphView
                             {
                                 if (edge.input.portType == param.ParameterType && edge.input.portName == param.Name)
                                 {
-                                    GenericHelpers.SetVariable(inputNode.node, null, param.Name);
+                                    GenericHelpers.SetVariable(inputNode.Node, null, param.Name);
                                 }
                             }
                         }
                     }
-                    inputNode.title = inputNode.node.GetTitle();
-                    inputNode.description = inputNode.node.GetDescription(inputNode);
-                    outputNode.title = outputNode.node.GetTitle();
-                    outputNode.description = outputNode.node.GetDescription(outputNode);
+                    inputNode.title = inputNode.Node.GetTitle();
+                    inputNode.Description = inputNode.Node.GetDescription(inputNode);
+                    outputNode.title = outputNode.Node.GetTitle();
+                    outputNode.Description = outputNode.Node.GetDescription(outputNode);
                 }
             });
         }
@@ -197,33 +191,33 @@ public class DecisionTreeView : GraphView
                 BaseNodeView inputNode = elem.input.node as BaseNodeView;
                 BaseNodeView outputNode = elem.output.node as BaseNodeView;
 
-                InputOutputPorts input = new(inputNode.node.guid, elem.input.name, outputNode.node.guid, elem.output.name);
+                InputOutputPorts input = new(inputNode.Node.Guid, elem.input.name, outputNode.Node.Guid, elem.output.name);
 
                 // Apply the edge for real
 
                 // If we're a decision node
-                Decision decisionNode = outputNode.node as Decision;
-                RootNode rootNode = outputNode.node as RootNode;
-                if (decisionNode != null)
+                if (outputNode.Node is Decision)
                 {
-                    if (input.outputPortName == "TRUE")
-                        decisionNode.trueNode = inputNode.node as DecisionTreeNode;
-                    else if (input.outputPortName == "FALSE")
-                        decisionNode.falseNode = inputNode.node as DecisionTreeNode;
+                    Decision decisionNode = outputNode.Node as Decision;
+                    if (input.OutputPortName == "TRUE")
+                        decisionNode.TrueNode = inputNode.Node as DecisionTreeNode;
+                    else if (input.OutputPortName == "FALSE")
+                        decisionNode.FalseNode = inputNode.Node as DecisionTreeNode;
                     else
                         Debug.LogError("Decision node was set from an invalid output?!");
                 }
 
                 // If we're a root node
-                else if(rootNode != null)
+                else if(outputNode.Node is RootNode)
                 {
-                    rootNode.child = inputNode.node as DecisionTreeNode;
+                    RootNode rootNode = outputNode.Node as RootNode;
+                    rootNode.Child = inputNode.Node as DecisionTreeNode;
                 }
 
                 // Otherwise we can add these dynamically
                 else
                 {
-                    var constructors = inputNode.node.GetType().GetConstructors();
+                    var constructors = inputNode.Node.GetType().GetConstructors();
                     foreach(var constructor in constructors)
                     {
                         if (constructor.GetParameters().Length > 0)
@@ -232,22 +226,26 @@ public class DecisionTreeView : GraphView
                             {
                                 if (elem.input.portType == param.ParameterType && elem.input.portName == param.Name)
                                 {
-                                    GenericHelpers.SetVariable(inputNode.node, outputNode.node, param.Name);
+                                    GenericHelpers.SetVariable(inputNode.Node, outputNode.Node, param.Name);
                                 }
                             }
                         }
                     }
                 }
 
-                outputNode.connectedNodes.Add(inputNode);
-                inputNode.connectedNodes.Add(outputNode);
-                inputNode.title = inputNode.node.GetTitle();
-                inputNode.description = inputNode.node.GetDescription(inputNode);
-                outputNode.title = outputNode.node.GetTitle();
-                outputNode.description = outputNode.node.GetDescription(outputNode);
-                tree.inputs.Add(input);
+                outputNode.ConnectedNodes.Add(inputNode);
+                inputNode.ConnectedNodes.Add(outputNode);
+                inputNode.title = inputNode.Node.GetTitle();
+                inputNode.Description = inputNode.Node.GetDescription(inputNode);
+                outputNode.title = outputNode.Node.GetTitle();
+                outputNode.Description = outputNode.Node.GetDescription(outputNode);
+                _tree.Inputs.Add(input);
             });
         }
+
+        // Save our asset on any changes
+        EditorUtility.SetDirty(_tree);
+        AssetDatabase.SaveAssets();
         return graphViewChange;
     }
 

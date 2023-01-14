@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GetDataFromObject : F_Condition
 {
-    DTRunner dtRunner;
+    private DTRunner _dtRunner;
 
     // Presents a short summary on what this condition is checking
     public override string GetSummary(BaseNodeView nodeView)
@@ -14,8 +14,8 @@ public class GetDataFromObject : F_Condition
 
     public override bool Invoke()
     {
-        if (dtRunner)
-            return dtRunner.TestBool;
+        if (_dtRunner)
+            return _dtRunner.TestBool;
 
         return false;
     }
@@ -25,6 +25,6 @@ public class GetDataFromObject : F_Condition
     {
         base.Initialise(metaData);
         if (metaData is DTRunner)
-            dtRunner = metaData as DTRunner;
+            _dtRunner = metaData as DTRunner;
     }
 }

@@ -1,9 +1,5 @@
-using Codice.CM.Common;
-using System;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.Callbacks;
-using UnityEditorInternal.VR;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,8 +7,8 @@ using UnityEngine.UIElements;
 public class DecisionTreeEditor : EditorWindow
 {
 
-    InspectorView inspectorView;
-    protected DecisionTreeView treeView;
+    private InspectorView _inspectorView;
+    protected DecisionTreeView TreeView;
 
     [MenuItem("Window/AI/Decision Tree Editor")]
     public static void ShowExample()
@@ -55,9 +51,9 @@ public class DecisionTreeEditor : EditorWindow
         var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Packages/com.kierancoppins.decision-trees/Editor/DecisionTreeEditor.uss");
         root.styleSheets.Add(styleSheet);
 
-        inspectorView = root.Q<InspectorView>();
-        treeView = root.Q<DecisionTreeView>();
-        treeView.OnNodeSelected = OnNodeSelectionChanged;
+        _inspectorView = root.Q<InspectorView>();
+        TreeView = root.Q<DecisionTreeView>();
+        TreeView.OnNodeSelected = OnNodeSelectionChanged;
 
         OnSelectionChange();
     }
@@ -95,16 +91,16 @@ public class DecisionTreeEditor : EditorWindow
     {
         DecisionTree decisionTree = Selection.activeObject as DecisionTree;
         if (decisionTree && AssetDatabase.CanOpenAssetInEditor(decisionTree.GetInstanceID()))
-            treeView.PopulateView(decisionTree);
+            TreeView.PopulateView(decisionTree);
     }
 
     void OnNodeSelectionChanged(BaseNodeView nodeView)
     {
-        inspectorView.UpdateSelection(nodeView);
+        _inspectorView.UpdateSelection(nodeView);
     }
 
     private void OnInspectorUpdate()
     {
-        treeView?.UpdateNodeStates();
+        TreeView?.UpdateNodeStates();
     }
 }

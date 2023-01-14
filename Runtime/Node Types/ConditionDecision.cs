@@ -1,22 +1,14 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
 
 public class ConditionDecision : Decision
 {
-    [HideInInspector] public F_Condition Condition;
+    [HideInInspector] [SerializeField] protected F_Condition Condition;
 
-    public ConditionDecision()
-    {
+    public ConditionDecision() { }
 
-    }
-
-    public ConditionDecision(F_Condition Condition)
-    {
-        this.Condition = Condition;
-    }
+    public ConditionDecision(F_Condition Condition) { }
 
     public override void Initialise<T>(T metaData)
     {
@@ -26,14 +18,14 @@ public class ConditionDecision : Decision
 
     public override DecisionTreeNode GetBranch()
     {
-        return Condition.Invoke() ? trueNode : falseNode;
+        return Condition.Invoke() ? TrueNode : FalseNode;
     }
 
     public override DecisionTreeEditorNodeBase Clone()
     {
         ConditionDecision node = Instantiate(this);
-        node.trueNode = (DecisionTreeNode)trueNode.Clone();
-        node.falseNode = (DecisionTreeNode)falseNode.Clone();
+        node.TrueNode = (DecisionTreeNode)TrueNode.Clone();
+        node.FalseNode = (DecisionTreeNode)FalseNode.Clone();
         node.Condition = (F_Condition)Condition.Clone();
         return node;
     }
@@ -42,18 +34,18 @@ public class ConditionDecision : Decision
     {
         try
         {
-            nodeView.error = "";
-            return $"The mob will {trueNode.GetTitle().ToLower()} if {Condition.GetSummary(nodeView).ToLower()}. Otherwise the mob will {falseNode.GetTitle().ToLower()}.";
+            nodeView.Error = "";
+            return $"The mob will {TrueNode.GetTitle().ToLower()} if {Condition.GetSummary(nodeView).ToLower()}. Otherwise the mob will {FalseNode.GetTitle().ToLower()}.";
         }
         catch (System.Exception e)
         {
-            nodeView.error = e.Message;
+            nodeView.Error = e.Message;
             return "There was an issue with this description";
         }
     }
 
     public override List<DecisionTreeEditorNodeBase> GetChildren()
     {
-        return new() { trueNode, falseNode, Condition };
+        return new() { TrueNode, FalseNode, Condition };
     }
 }
