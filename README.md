@@ -30,7 +30,7 @@ To install with a GitURL you simply:
 ### Download by Name
 To download by name requires a bit of setup. Effectively, I am going to be re-iterating is from this [forum post](https://forum.unity.com/threads/using-github-packages-registry-with-unity-package-manager.861076/) from step 4.
 
-- First, you need to [log in to the git registry using a personal access token (PAK)](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token). This requires npm to be installed. You can do this by running the command: `npm login --scope=@<your-github-username> --registry=https://npm.pkg.github.com` and entering your gitbub username, PAK for password, and your email.
+- First, you need to [log in to the git registry using a personal access token (PAK)](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token). This requires npm to be installed and make sure your PAK has `packages:read` permissions. You can do this by running the command: `npm login --scope=@<your-github-username> --registry=https://npm.pkg.github.com` and entering your github username, PAK for password, and your email.
 
 - Next, you will need to do what is discussed [here](https://forum.unity.com/threads/npm-registry-authentication.836308/). This access token should then get placed into the `.npmrc` file inside your user's root (For Windows this would be `C:/Users/<user>/.npmrc`). Then inside this same user root location you need to create a `.upmconfig.toml`. The contents of this file should be:
     ```
