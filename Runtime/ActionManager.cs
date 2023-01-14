@@ -82,7 +82,7 @@ public class ActionManager : MonoBehaviour
                 tempList.Remove(a);
                 _actionQueue = new Queue<ActionPacket>(tempList);
                 currentActionsChanged = true;
-                acceptASyncActions = (a.Action.Flags & Action.ActionFlags.SyncAction) == Action.ActionFlags.SyncAction;
+                acceptASyncActions = (a.Action.Flags & Action.ActionFlags.AsyncAction) == Action.ActionFlags.AsyncAction;
                 _waitForActions = (a.Action.Flags & Action.ActionFlags.Interruptable) != Action.ActionFlags.Interruptable;
                 break;
             }
@@ -93,7 +93,7 @@ public class ActionManager : MonoBehaviour
             if (_currentActions.Count > 0)
             {
                 Action action = _actionQueue.Peek().Action;
-                if ((action.Flags & Action.ActionFlags.SyncAction) == Action.ActionFlags.SyncAction && acceptASyncActions)
+                if ((action.Flags & Action.ActionFlags.AsyncAction) == Action.ActionFlags.AsyncAction && acceptASyncActions)
                 {
                     _currentActions.Add(_actionQueue.Dequeue().Action);
                     currentActionsChanged = true;
@@ -107,7 +107,7 @@ public class ActionManager : MonoBehaviour
                 Action action = _actionQueue.Dequeue().Action;
                 _currentActions.Add(action);
                 currentActionsChanged = true;
-                acceptASyncActions = (action.Flags & Action.ActionFlags.SyncAction) == Action.ActionFlags.SyncAction;
+                acceptASyncActions = (action.Flags & Action.ActionFlags.AsyncAction) == Action.ActionFlags.AsyncAction;
                 _waitForActions = (action.Flags & Action.ActionFlags.Interruptable) != Action.ActionFlags.Interruptable;
             }
         }

@@ -1,14 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+/// <summary>
+/// A decision node that uses a condition node to determine its decision.
+/// </summary>
 public class ConditionDecision : Decision
 {
-    [HideInInspector] [SerializeField] protected F_Condition Condition;
+    [HideInInspector] [SerializeField] protected Function<bool> Condition;
 
     public ConditionDecision() { }
 
-    public ConditionDecision(F_Condition Condition) { }
+    public ConditionDecision(Function<bool> Condition) { }
 
     public override void Initialise<T>(T metaData)
     {
@@ -26,7 +28,7 @@ public class ConditionDecision : Decision
         ConditionDecision node = Instantiate(this);
         node.TrueNode = (DecisionTreeNode)TrueNode.Clone();
         node.FalseNode = (DecisionTreeNode)FalseNode.Clone();
-        node.Condition = (F_Condition)Condition.Clone();
+        node.Condition = (Function<bool>)Condition.Clone();
         return node;
     }
 

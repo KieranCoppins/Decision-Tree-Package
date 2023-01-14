@@ -3,7 +3,9 @@ using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-
+/// <summary>
+/// The main class of our decision tree visual editor
+/// </summary>
 public class DecisionTreeEditor : EditorWindow
 {
 
@@ -94,6 +96,10 @@ public class DecisionTreeEditor : EditorWindow
             TreeView.PopulateView(decisionTree);
     }
 
+    /// <summary>
+    /// Runs when our node selection has changed
+    /// </summary>
+    /// <param name="nodeView">The node we now have selected</param>
     void OnNodeSelectionChanged(BaseNodeView nodeView)
     {
         _inspectorView.UpdateSelection(nodeView);

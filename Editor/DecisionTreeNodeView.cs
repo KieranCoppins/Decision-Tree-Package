@@ -1,5 +1,8 @@
 using UnityEditor.Experimental.GraphView;
 
+/// <summary>
+/// The node view for all decision tree nodes (such as actions & decisions)
+/// </summary>
 public class DecisionTreeNodeView : BaseNodeView
 {
 
@@ -10,7 +13,10 @@ public class DecisionTreeNodeView : BaseNodeView
         StyleClassAssignment();
     }
 
-    void StyleClassAssignment()
+    /// <summary>
+    /// Apply different styling depending on the type of note
+    /// </summary>
+    private void StyleClassAssignment()
     {
         if (Node is Action)
             AddToClassList("action");
@@ -20,7 +26,10 @@ public class DecisionTreeNodeView : BaseNodeView
             AddToClassList("root");
     }
 
-    void CreateInputPorts()
+    /// <summary>
+    /// Creates all the input ports for this node
+    /// </summary>
+    private void CreateInputPorts()
     {
         if (Node is RootNode)
             return;
@@ -30,6 +39,8 @@ public class DecisionTreeNodeView : BaseNodeView
         port.name = "main";
         InputPorts.Add("main", port);
         inputContainer.Add(port);
+
+        // Depending on the constructors set of this node, procedurally generate input ports for this node
         var constructors = Node.GetType().GetConstructors();
         foreach(var constructor in constructors)
         {
@@ -47,7 +58,10 @@ public class DecisionTreeNodeView : BaseNodeView
         }
     }
 
-    void CreateOutputPorts()
+    /// <summary>
+    /// Creates all the output ports for this node
+    /// </summary>
+    private void CreateOutputPorts()
     {
         if (Node is Action)
         {

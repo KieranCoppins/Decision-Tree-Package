@@ -10,6 +10,7 @@ public class FunctionNodeView : BaseNodeView
     {
         CreateInputPorts();
 
+        // Function nodes should only ever have 1 output node
         Port port = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, GenericHelpers.GetGenericType(function));
         port.portName = "Output";
         port.name = "Output";
@@ -18,6 +19,9 @@ public class FunctionNodeView : BaseNodeView
         AddToClassList("function");
     }
 
+    /// <summary>
+    /// Generates all the input nodes for this function node based on its constructors
+    /// </summary>
     void CreateInputPorts()
     {
         if (Node is RootNode)

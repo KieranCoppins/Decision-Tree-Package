@@ -10,6 +10,10 @@ public class InspectorView : VisualElement
 
     }
 
+    /// <summary>
+    /// Updates the inspector
+    /// </summary>
+    /// <param name="nodeView">The node we want to display in the inspector</param>
     public void UpdateSelection(BaseNodeView nodeView)
     {
         Clear();

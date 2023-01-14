@@ -16,22 +16,39 @@ public class DecisionTree : ScriptableObject
     [HideInInspector] public List<DecisionTreeEditorNodeBase> Nodes = new List<DecisionTreeEditorNodeBase>();
     [HideInInspector] public List<InputOutputPorts> Inputs = new List<InputOutputPorts>();
 
+    /// <summary>
+    /// Run this tree
+    /// </summary>
+    /// <returns>The action determined by the tree to do next</returns>
     public Action Run() => Root.MakeDecision() as Action;
 
+    /// <summary>
+    /// Initialise this tree with the given meta data. Meta data is passed down the tree to each node.
+    /// </summary>
+    /// <typeparam name="T">The type of metadata</typeparam>
+    /// <param name="metaData">The meta data to pass to each node</param>
     public virtual void Initialise<T>(T metaData) => Root.Initialise(metaData);
 
-    public List<DecisionTreeEditorNodeBase> GetChildren(DecisionTreeEditorNodeBase node) => node.GetChildren();
-
-    public void Traverse(DecisionTreeEditorNodeBase node, System.Action<DecisionTreeEditorNodeBase> visiter)
+    /// <summary>
+    /// Traverses through the tree and applies the visiter function to each node
+    /// </summary>
+    /// <param name="node">The node to traverse</param>
+    /// <param name="visiter">The function to the apply to the traversed nodes' children</param>
+    public void Traverse(DecisionTreeEditorNodeBase node, Action<DecisionTreeEditorNodeBase> visiter)
     {
         if (node)
         {
             visiter.Invoke(node);
-            var children = GetChildren(node);
+            var children = node.GetChildren();
             children?.ForEach((n) => { if (n) Traverse(n, visiter); });
         }
     }
 
+    /// <summary>
+    /// Create a new instance of this tree
+    /// </summary>
+    /// <param name="name">An optional name to give this tree</param>
+    /// <returns>A clone of this decision tree</returns>
     public DecisionTree Clone(string name = null)
     {
         DecisionTree tree = Instantiate(this);
@@ -47,8 +64,12 @@ public class DecisionTree : ScriptableObject
         return tree;
     }
 
-    /// Editor Functions
-
+    /// <summary>
+    /// Creates a new node of the given type, saves the asset and adds it to the tree.
+    /// </summary>
+    /// <param name="type">The type of node to create</param>
+    /// <param name="creationPos"> The position inside the visual editor to place this node</param>
+    /// <returns>The node that was created</returns>
     public DecisionTreeEditorNodeBase CreateNode(Type type, Vector2 creationPos)
     {
         DecisionTreeEditorNodeBase node = CreateInstance(type) as DecisionTreeEditorNodeBase;
@@ -63,6 +84,10 @@ public class DecisionTree : ScriptableObject
         return node;
     }
 
+    /// <summary>
+    /// Deletes the given node
+    /// </summary>
+    /// <param name="node">The node to delete</param>
     public void DeleteNode(DecisionTreeEditorNodeBase node)
     {
         Nodes.Remove(node);
@@ -71,6 +96,9 @@ public class DecisionTree : ScriptableObject
     }
 }
 
+/// <summary>
+/// States of the node to be in, defaults to idle
+/// </summary>
 public enum DecisionTreeNodeRunningState
 {
     Idle,
@@ -79,6 +107,9 @@ public enum DecisionTreeNodeRunningState
     Interrupted,
 }
 
+/// <summary>
+/// The base class for every node in the decision tree.
+/// </summary>
 public abstract class DecisionTreeEditorNodeBase : ScriptableObject
 {
     /// Editor Values
@@ -89,38 +120,75 @@ public abstract class DecisionTreeEditorNodeBase : ScriptableObject
 
     public System.Action OnValidateCallback { get; set; }
 
+    /// <summary>
+    /// Clone this node - if the node contains child nodes then it should clone those as well
+    /// </summary>
+    /// <returns>A cloned version of this node (An instance of this node)</returns>
     public virtual DecisionTreeEditorNodeBase Clone() => Instantiate(this);
 
+    /// <summary>
+    /// Gets all the child nodes associated with this node
+    /// </summary>
+    /// <returns>A list of all the children nodes of this node</returns>
     public virtual List<DecisionTreeEditorNodeBase> GetChildren() => null;
 
+    /// <summary>
+    /// Generate a stylised title to display in the visual editor
+    /// </summary>
+    /// <returns>The title of this node</returns>
     public virtual string GetTitle() => GenericHelpers.SplitCamelCase(name);
 
+    /// <summary>
+    /// Generate a description of this node
+    /// </summary>
+    /// <param name="nodeView"></param>
+    /// <returns>a description of the node</returns>
     public virtual string GetDescription(BaseNodeView nodeView) => "This is the default description of a DecisionTreeEditorNode";
 
     private void OnValidate() => OnValidateCallback?.Invoke();
 
+    /// <summary>
+    /// Initialise this node with the meta data provided. This should also initialise any children nodes as well
+    /// </summary>
+    /// <typeparam name="T">The type of meta data</typeparam>
+    /// <param name="metaData">The metadata to initialise with</param>
     public virtual void Initialise<T>(T metaData) { }
 }
 
+/// <summary>
+/// A base class for decisions and actions
+/// </summary>
 public abstract class DecisionTreeNode : DecisionTreeEditorNodeBase
 {
 
     public DecisionTreeNode() { }
 
+    /// <summary>
+    /// Tell this node to make a decision
+    /// </summary>
+    /// <returns> Returns the node at the end of the decision making </returns>
     public abstract DecisionTreeNode MakeDecision();
 }
 
-
+/// <summary>
+/// A base class for all action nodes. Sets some default flags
+/// </summary>
 public abstract class Action : DecisionTreeNode
 {
+    /// <summary>
+    /// Flags to determine how this action should be executed.
+    /// </summary>
     [Flags]
     public enum ActionFlags
     {
-        SyncAction = 1 << 0,
+        AsyncAction = 1 << 0,
         Interruptor = 1 << 1,
         Interruptable = 1 << 2,
     }
 
+    /// <summary>
+    /// The current flags set on this action.
+    /// </summary>
     public ActionFlags Flags { get { return _flags; } protected set { _flags = value; } }
 
     [EnumFlags] [SerializeField] private ActionFlags _flags;
@@ -141,12 +209,19 @@ public abstract class Action : DecisionTreeNode
     public abstract IEnumerator Execute();
 }
 
+/// <summary>
+/// A base decision nodes. Decision nodes handle which path of the tree to move to next.
+/// </summary>
 public abstract class Decision : DecisionTreeNode
 {
     [HideInInspector] public DecisionTreeNode TrueNode;
 
     [HideInInspector] public DecisionTreeNode FalseNode;
 
+    /// <summary>
+    /// Returns the node which this decision node has decided.
+    /// </summary>
+    /// <returns></returns>
     public abstract DecisionTreeNode GetBranch();
 
 
@@ -170,34 +245,39 @@ public abstract class Decision : DecisionTreeNode
     public override List<DecisionTreeEditorNodeBase> GetChildren() => new() { TrueNode, FalseNode };
 }
 
-// A base function node that can return a given value
+/// <summary>
+/// A base function node. Function nodes can be plugged into any other node. When invoked they return their type T.
+/// </summary>
+/// <typeparam name="T">The type that this function node will return</typeparam>
 public abstract class Function<T> : DecisionTreeEditorNodeBase
 {
     public Function() { }
 
-    // The condition to invoke
+    /// <summary>
+    /// Invoke this function node.
+    /// </summary>
+    /// <returns>The outcome of the function</returns>
     public abstract T Invoke();
-}
-
-public abstract class F_Condition : Function<bool>
-{
 
     /// <summary>
     /// This should return a quick summary of what the function does. NOT THE DESCRIPTION. This will be used within the description of other nodes.
     /// </summary>
     /// <returns></returns>
     public abstract string GetSummary(BaseNodeView nodeView);
-    public override string GetDescription(BaseNodeView nodeView) => $"Returns true if {GetSummary(nodeView)}.";
+
+    public override string GetDescription(BaseNodeView nodeView) => $"This is the default function description.";
 }
 
-
-public abstract class F_LogicGate : F_Condition
+/// <summary>
+/// A base logic gate node. Logic gate nodes take 2 boolean function nodes and applies a logic calculation on them. Such as AND.
+/// </summary>
+public abstract class F_LogicGate : Function<bool>
 {
-    [HideInInspector] [SerializeField] protected F_Condition A;
+    [HideInInspector] [SerializeField] protected Function<bool> A;
 
-    [HideInInspector][SerializeField] protected F_Condition B;
+    [HideInInspector] [SerializeField] protected Function<bool> B;
 
-    public F_LogicGate(F_Condition A, F_Condition B) { }
+    public F_LogicGate(Function<bool> A, Function<bool> B) { }
 
     public override void Initialise<T>(T metaData)
     {
@@ -209,22 +289,39 @@ public abstract class F_LogicGate : F_Condition
     public override DecisionTreeEditorNodeBase Clone()
     {
         F_LogicGate node = Instantiate(this);
-        node.A = (F_Condition)A.Clone();
-        node.B = (F_Condition)B.Clone();
+        node.A = (Function<bool>)A.Clone();
+        node.B = (Function<bool>)B.Clone();
         return node;
     }
 
     public override List<DecisionTreeEditorNodeBase> GetChildren() => new() { A, B };
 }
 
-///  Editor classes that are also referenced in engine
-
+/// <summary>
+/// A class that stores information about edges inside the map.
+/// </summary>
 [Serializable]
 public class InputOutputPorts
 {
+    /// <summary>
+    /// The GUID of the input node for this edge
+    /// </summary>
     public string InputGUID;
+
+    /// <summary>
+    /// The port name of the input node for this edge
+    /// </summary>
     public string InputPortName;
+
+    /// <summary>
+    /// The GUID of the output node for this edge
+    /// </summary>
     public string OutputGUID;
+
+
+    /// <summary>
+    /// The port name of the output node for this edge
+    /// </summary>
     public string OutputPortName;
 
     public InputOutputPorts(string inputGUID, string inputPortName, string outputGUID, string outputPortName)
@@ -265,20 +362,40 @@ public class InputOutputPorts
     public override int GetHashCode() => base.GetHashCode();
 }
 
+/// <summary>
+/// The base node view class. This contains all the information that every node in the visual editor will need.
+/// </summary>
 public abstract class BaseNodeView : Node
 {
     public Action<BaseNodeView> OnNodeSelected { get; set; }
 
+    /// <summary>
+    /// The node that this node view contains
+    /// </summary>
     public DecisionTreeEditorNodeBase Node { get; }
 
+    /// <summary>
+    /// A dictionary containing all input ports, keyed by their port names
+    /// </summary>
     public readonly Dictionary<string, Port> InputPorts = new ();
+
+    /// <summary>
+    /// A dictionary containing all output ports, keyed by their port names
+    /// </summary>
     public readonly Dictionary<string, Port> OutputPorts = new ();
+
+    /// <summary>
+    /// A list off all other nodes that are connected to this node
+    /// </summary>
     public readonly List<BaseNodeView> ConnectedNodes = new ();
 
     private readonly Label _descriptionLabel;
     private readonly Label _errorLabel;
     private readonly VisualElement _errorContainer;
 
+    /// <summary>
+    /// The description that is applied to the node view inside the visual editor
+    /// </summary>
     public string Description {  
         get { return _descriptionLabel.text; } 
         
@@ -297,6 +414,9 @@ public abstract class BaseNodeView : Node
         } 
     }
 
+    /// <summary>
+    /// The error that is displayed in the visual editor
+    /// </summary>
     public string Error
     {
         get { return _errorLabel.text; }
@@ -351,12 +471,18 @@ public abstract class BaseNodeView : Node
             OnNodeSelected.Invoke(this);
     }
 
+    /// <summary>
+    /// Links to the OnValidateCallback, runs whenever values change on the node.
+    /// </summary>
     void OnValidate()
     {
         title = Node.GetTitle();
         Description = Node.GetDescription(this);
     }
 
+    /// <summary>
+    /// Updates the visual state for this node.
+    /// </summary>
     public void UpdateState()
     {
         RemoveFromClassList("running");

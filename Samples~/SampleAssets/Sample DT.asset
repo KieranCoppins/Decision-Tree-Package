@@ -87,10 +87,6 @@ MonoBehaviour:
     OutputGUID: f76fe2f6e92c8b44baa389b4a98beb5d
     OutputPortName: FALSE
   - InputGUID: f76fe2f6e92c8b44baa389b4a98beb5d
-    InputPortName: Condition
-    OutputGUID: 299c9d86abafb794e96d068a544008d9
-    OutputPortName: Output
-  - InputGUID: f76fe2f6e92c8b44baa389b4a98beb5d
     InputPortName: main
     OutputGUID: 4e3c07b92a7732a48b97e89f773f615a
     OutputPortName: main
@@ -98,6 +94,10 @@ MonoBehaviour:
     InputPortName: main
     OutputGUID: f76fe2f6e92c8b44baa389b4a98beb5d
     OutputPortName: TRUE
+  - InputGUID: f76fe2f6e92c8b44baa389b4a98beb5d
+    InputPortName: Condition
+    OutputGUID: 299c9d86abafb794e96d068a544008d9
+    OutputPortName: Output
 --- !u!114 &1019196323504941523
 MonoBehaviour:
   m_ObjectHideFlags: 0

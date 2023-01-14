@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class F_AND : F_LogicGate
 {
-    public F_AND(F_Condition A, F_Condition B) : base(A, B) { }
+    public F_AND(Function<bool> A, Function<bool> B) : base(A, B) { }
 
     public override bool Invoke() => A.Invoke() && B.Invoke();
 

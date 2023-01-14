@@ -11,6 +11,9 @@ public class DecisionTreeView : GraphView
 
     public new class UxmlFactory : UxmlFactory<DecisionTreeView, UxmlTraits> { };
 
+    /// <summary>
+    /// The tree that is being displayed
+    /// </summary>
     private DecisionTree _tree;
 
     public DecisionTreeView()
@@ -28,6 +31,10 @@ public class DecisionTreeView : GraphView
         graphViewChanged += OnGraphViewChanged;
     }
 
+    /// <summary>
+    /// Populate our tree view
+    /// </summary>
+    /// <param name="tree">The tree to populate the tree view with</param>
     public void PopulateView(DecisionTree tree)
     {
         _tree = tree;
@@ -67,7 +74,6 @@ public class DecisionTreeView : GraphView
 
     }
 
-
     public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
     {
         Vector2 clickPoint = viewTransform.matrix.inverse.MultiplyPoint(evt.localMousePosition);
@@ -93,6 +99,11 @@ public class DecisionTreeView : GraphView
         }
     }
 
+    /// <summary>
+    /// Creates a node in the tree view and inside the decision tree
+    /// </summary>
+    /// <param name="type">The type of node to create</param>
+    /// <param name="creationPos">The position at which to place the node</param>
     void CreateNode(System.Type type, Vector2 creationPos)
     {
         DecisionTreeEditorNodeBase node = _tree.CreateNode(type, creationPos);
@@ -108,6 +119,10 @@ public class DecisionTreeView : GraphView
         return ports.ToList().Where(endPort => endPort.direction != startPort.direction && endPort.node != startPort.node).ToList();
     }
 
+    /// <summary>
+    /// Creates a node view for action & decision nodes
+    /// </summary>
+    /// <param name="node"></param>
     private void CreateNodeView(DecisionTreeNode node)
     {
         DecisionTreeNodeView nodeView = new(node);
@@ -115,6 +130,10 @@ public class DecisionTreeView : GraphView
         AddElement(nodeView);
     }
 
+    /// <summary>
+    /// Creates a node view for function nodes
+    /// </summary>
+    /// <param name="node"></param>
     private void CreateNodeView(object node)
     {
         FunctionNodeView nodeView = new(node);
@@ -122,6 +141,11 @@ public class DecisionTreeView : GraphView
         AddElement(nodeView);
     }
 
+    /// <summary>
+    /// Is called whenever the graph view changes
+    /// </summary>
+    /// <param name="graphViewChange"></param>
+    /// <returns></returns>
     private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange)
     {
         if (graphViewChange.elementsToRemove != null)
@@ -249,6 +273,9 @@ public class DecisionTreeView : GraphView
         return graphViewChange;
     }
 
+    /// <summary>
+    /// Update all nodes' state
+    /// </summary>
     public void UpdateNodeStates()
     {
         nodes.ForEach(node =>
