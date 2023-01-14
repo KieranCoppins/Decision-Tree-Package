@@ -177,7 +177,7 @@ public class DecisionTreeView : GraphView
                             {
                                 if (edge.input.portType == param.ParameterType && edge.input.portName == param.Name)
                                 {
-                                    inputNode.node.GetType().GetField(param.Name).SetValue(inputNode.node, null);
+                                    GenericHelpers.SetVariable(inputNode.node, null, param.Name);
                                 }
                             }
                         }
@@ -232,7 +232,7 @@ public class DecisionTreeView : GraphView
                             {
                                 if (elem.input.portType == param.ParameterType && elem.input.portName == param.Name)
                                 {
-                                    inputNode.node.GetType().GetField(param.Name).SetValue(inputNode.node, outputNode.node);
+                                    GenericHelpers.SetVariable(inputNode.node, outputNode.node, param.Name);
                                 }
                             }
                         }
