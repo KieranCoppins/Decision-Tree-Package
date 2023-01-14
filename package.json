@@ -21,10 +21,11 @@
         }
     ],
     "author": {
-        "name": "Kieran Coppins"
+        "name": "Kieran Coppins",
+        "url": "https://kierancoppins.com"
     },
     "publishConfig": {
-        "registry": "https://npm.pkg.github.com/@kierancoppins"
+        "registry": "https://npm.pkg.github.com/@kcoppins"
     },
     "repository": "https://github.com/KieranCoppins/Decision-Tree-Package.git",
     "changelogUrl": "https://github.com/KieranCoppins/Decision-Tree-Package/blob/master/CHANGELOG.md",
