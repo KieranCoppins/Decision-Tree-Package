@@ -6,7 +6,7 @@
     "unity": "2021.3",
     "unityRelease": "6f1",
     "dependencies": {
-        "kierancoppins/com.kierancoppins.generic-helpers": "1.0.0"
+        "com.kierancoppins.generic-helpers": "1.0.0"
     },
     "samples": [
         {
