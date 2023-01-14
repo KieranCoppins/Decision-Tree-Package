@@ -3,3 +3,4 @@ Here are all of the decision tree docs and tutorials. Consult the below contents
 
 ## Contents
 [Runtime Visualisation](RuntimeVisualisation.md)
+[Advanced Node Creation](AdvancedNodeCreation.md)
