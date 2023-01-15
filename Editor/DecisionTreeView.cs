@@ -14,6 +14,8 @@ namespace KieranCoppins.DecisionTreesEditor
 
         public new class UxmlFactory : UxmlFactory<DecisionTreeView, UxmlTraits> { };
 
+        private bool _simpleNodeView;
+
         /// <summary>
         /// The tree that is being displayed
         /// </summary>
@@ -38,9 +40,10 @@ namespace KieranCoppins.DecisionTreesEditor
         /// Populate our tree view
         /// </summary>
         /// <param name="tree">The tree to populate the tree view with</param>
-        public void PopulateView(DecisionTree tree)
+        public void PopulateView(DecisionTree tree, bool simpleNodeView = true)
         {
             _tree = tree;
+            _simpleNodeView = simpleNodeView;
             graphViewChanged -= OnGraphViewChanged;
             DeleteElements(graphElements);
             graphViewChanged += OnGraphViewChanged;
@@ -130,6 +133,7 @@ namespace KieranCoppins.DecisionTreesEditor
         {
             DecisionTreeNodeView nodeView = new(node);
             nodeView.OnNodeSelected = OnNodeSelected;
+            nodeView.AddToClassList(_simpleNodeView ? "simple" : "complex");
             AddElement(nodeView);
         }
 
@@ -141,6 +145,7 @@ namespace KieranCoppins.DecisionTreesEditor
         {
             FunctionNodeView nodeView = new(node);
             nodeView.OnNodeSelected = OnNodeSelected;
+            nodeView.AddToClassList(_simpleNodeView ? "simple" : "complex");
             AddElement(nodeView);
         }
 

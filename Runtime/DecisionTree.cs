@@ -439,8 +439,7 @@ namespace KieranCoppins.DecisionTrees
             }
         }
 
-
-        public BaseNodeView(DecisionTreeEditorNodeBase node) : base("Packages/com.kierancoppins.decision-trees/Editor/DecisionTreeNodeView.uxml")
+        public BaseNodeView(DecisionTreeEditorNodeBase node, string uxml = "Packages/com.kierancoppins.decision-trees/Editor/DecisionTreeNodeView.uxml") : base(uxml)
         {
             Node = node;
             Node.OnValidateCallback += OnValidate;

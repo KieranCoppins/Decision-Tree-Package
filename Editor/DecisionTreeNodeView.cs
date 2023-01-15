@@ -1,5 +1,6 @@
 using UnityEditor.Experimental.GraphView;
 using KieranCoppins.DecisionTrees;
+using UnityEngine.UIElements;
 
 namespace KieranCoppins.DecisionTreesEditor
 {
@@ -9,9 +10,13 @@ namespace KieranCoppins.DecisionTreesEditor
     /// </summary>
     public class DecisionTreeNodeView : BaseNodeView
     {
+        private InspectorView _nodeInspectorView;
 
         public DecisionTreeNodeView(DecisionTreeNode node) : base(node)
         {
+            _nodeInspectorView = this.Q<InspectorView>();
+            _nodeInspectorView.UpdateSelection(this);
+
             CreateInputPorts();
             CreateOutputPorts();
             StyleClassAssignment();

@@ -3,6 +3,7 @@ using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.UIElements;
 using KieranCoppins.DecisionTrees;
+using UnityEditor.UIElements;
 
 namespace KieranCoppins.DecisionTreesEditor
 {
@@ -13,7 +14,17 @@ namespace KieranCoppins.DecisionTreesEditor
     {
 
         private InspectorView _inspectorView;
+
+        private VisualElement _leftPanel;
+        private VisualElement _dragLine;
+
+        protected ToolbarMenu OptionMenu;
+
         protected DecisionTreeView TreeView;
+
+        private bool _simpleNodeView = true;
+
+        public System.Action<bool> OnSimpleNodeViewChanged;
 
         [MenuItem("Window/AI/Decision Tree Editor")]
         public static void ShowExample()
@@ -23,7 +34,7 @@ namespace KieranCoppins.DecisionTreesEditor
             foreach (var type in types)
             {
                 var customWnd = GetWindow(type);
-                customWnd.titleContent = new GUIContent("Decision Tree Editor");
+                customWnd.titleContent = new GUIContent("Decision Tree Editor (Custom)");
                 return;
             }
             // Otherwise we had no assets so just load this one
@@ -42,7 +53,7 @@ namespace KieranCoppins.DecisionTreesEditor
             return false;
         }
 
-        public void CreateGUI()
+        public virtual void CreateGUI()
         {
             // Each editor window contains a root VisualElement object
             VisualElement root = rootVisualElement;
@@ -57,8 +68,15 @@ namespace KieranCoppins.DecisionTreesEditor
             root.styleSheets.Add(styleSheet);
 
             _inspectorView = root.Q<InspectorView>();
+            _leftPanel = root.Q<VisualElement>("left-panel");
+            _dragLine = root.Q<VisualElement>("unity-dragline-anchor");
             TreeView = root.Q<DecisionTreeView>();
             TreeView.OnNodeSelected = OnNodeSelectionChanged;
+
+            OptionMenu = root.Q<ToolbarMenu>();
+            OnSimpleNodeViewChanged += OnSimpleNodeClick;
+
+            UpdateOptionMenu();
 
             OnSelectionChange();
         }
@@ -92,11 +110,38 @@ namespace KieranCoppins.DecisionTreesEditor
         }
 
 
+        void UpdateOptionMenu()
+        {
+            // Clear our option menu off all items
+            OptionMenu.menu.MenuItems().Clear();
+
+            // Re add items
+            if (_simpleNodeView)
+                OptionMenu.menu.AppendAction("Simple node view", action => { _simpleNodeView = false; OnSimpleNodeViewChanged?.Invoke(_simpleNodeView); }, action => DropdownMenuAction.Status.Checked);
+            else
+                OptionMenu.menu.AppendAction("Simple node view", action => { _simpleNodeView = true; OnSimpleNodeViewChanged?.Invoke(_simpleNodeView); }, action => DropdownMenuAction.Status.Normal);
+        }
+
+        void OnSimpleNodeClick(bool simpleNodeView)
+        {
+            // Hide the inspector and side view line
+            DisplayStyle displayStyle = simpleNodeView ? DisplayStyle.Flex : DisplayStyle.None;
+            _leftPanel.style.display = displayStyle;
+            _dragLine.style.display = displayStyle;
+
+            // Update our options
+            UpdateOptionMenu();
+
+            // Update our node view
+            OnSelectionChange();
+        }
+
+
         public virtual void OnSelectionChange()
         {
             DecisionTree decisionTree = Selection.activeObject as DecisionTree;
             if (decisionTree && AssetDatabase.CanOpenAssetInEditor(decisionTree.GetInstanceID()))
-                TreeView.PopulateView(decisionTree);
+                TreeView.PopulateView(decisionTree, _simpleNodeView);
         }
 
         /// <summary>

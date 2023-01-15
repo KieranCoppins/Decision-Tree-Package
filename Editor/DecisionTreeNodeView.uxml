@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/Editor/AI/DecisionTreeNodeViewStyle.uss?fileID=7433441132597879392&amp;guid=01b1591bc435261499853aefe7582359&amp;type=3#DecisionTreeNodeViewStyle" />
+    <Style src="project://database/Packages/com.kierancoppins.decision-trees/Editor/DecisionTreeNodeViewStyle.uss?fileID=7433441132597879392&amp;guid=01b1591bc435261499853aefe7582359&amp;type=3#DecisionTreeNodeViewStyle" />
     <ui:VisualElement name="state-border" />
     <ui:VisualElement name="node-border">
         <ui:VisualElement name="contents">
@@ -17,6 +17,7 @@
                 <ui:VisualElement name="description-container">
                     <ui:Label text="This is a test description gwskjdhgaskjhdg fhfaslkdhf sakjdhf lkasjdhf lkjash flkas flkash flkasj hfloijksad" display-tooltip-when-elided="true" name="description" />
                 </ui:VisualElement>
+                <KieranCoppins.DecisionTreesEditor.InspectorView name="inspector-view" />
                 <ui:VisualElement name="error">
                     <ui:Label text="This is a test error where it will explain what terrible thing went wrong and howw to fix it." display-tooltip-when-elided="true" name="error-label" />
                 </ui:VisualElement>
