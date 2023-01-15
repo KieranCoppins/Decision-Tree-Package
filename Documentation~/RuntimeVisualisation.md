@@ -41,4 +41,6 @@ To begin with we get our active selection and try cast it directly as a Decision
 
 To extract the decision tree we just have to get the comonent that has it from our selected object. Then check if our component has a decision tree set. We also want to make sure we are in playmode so we have loaded the cloned version of the tree that the component would be using. Once we have confirmed this we can just populate the view with that decision tree rather than the saved decision tree in the asset database.
 
-And thats about it! Now you should be able to click on your version of the DTRunner and see nodes that are running have been highlighted.
+You can check if the visual editor is using your custom one by checking the title of the decision tree editor. It should contain (custom) at the end of the title. You can also just put a debug log inside your custom editor's OnSelectionChange.
+
+And thats about it! Now you should be able to click on your version of the DTRunner and see nodes that are running have been highlighted
