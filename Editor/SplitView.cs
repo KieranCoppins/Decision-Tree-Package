@@ -1,11 +1,13 @@
 using UnityEngine.UIElements;
-
-public class SplitView : TwoPaneSplitView
+namespace KieranCoppins.DecisionTreesEditor
 {
-    public new class UxmlFactory : UxmlFactory<SplitView, UxmlTraits> { };
-
-    public SplitView()
+    public class SplitView : TwoPaneSplitView
     {
+        public new class UxmlFactory : UxmlFactory<SplitView, UxmlTraits> { };
 
+        public SplitView()
+        {
+
+        }
     }
 }

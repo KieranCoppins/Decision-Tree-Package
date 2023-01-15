@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using KieranCoppins.DecisionTrees;
 
 // Require the action manager as a component so it is added automatically, 
 // this is needed to execute the actions inside the decision tree

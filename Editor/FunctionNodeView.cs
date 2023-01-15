@@ -3,42 +3,46 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
+using KieranCoppins.DecisionTrees;
 
-public class FunctionNodeView : BaseNodeView
+namespace KieranCoppins.DecisionTreesEditor
 {
-    public FunctionNodeView(object function) : base(function as DecisionTreeEditorNodeBase)
+    public class FunctionNodeView : BaseNodeView
     {
-        CreateInputPorts();
-
-        // Function nodes should only ever have 1 output node
-        Port port = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, GenericHelpers.GetGenericType(function));
-        port.portName = "Output";
-        port.name = "Output";
-        OutputPorts.Add("Output", port);
-        outputContainer.Add(port);
-        AddToClassList("function");
-    }
-
-    /// <summary>
-    /// Generates all the input nodes for this function node based on its constructors
-    /// </summary>
-    void CreateInputPorts()
-    {
-        if (Node is RootNode)
-            return;
-
-        var constructors = Node.GetType().GetConstructors();
-        foreach (var constructor in constructors)
+        public FunctionNodeView(object function) : base(function as DecisionTreeEditorNodeBase)
         {
-            if (constructor.GetParameters().Length > 0)
+            CreateInputPorts();
+
+            // Function nodes should only ever have 1 output node
+            Port port = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, GenericHelpers.GenericHelpers.GetGenericType(function));
+            port.portName = "Output";
+            port.name = "Output";
+            OutputPorts.Add("Output", port);
+            outputContainer.Add(port);
+            AddToClassList("function");
+        }
+
+        /// <summary>
+        /// Generates all the input nodes for this function node based on its constructors
+        /// </summary>
+        void CreateInputPorts()
+        {
+            if (Node is RootNode)
+                return;
+
+            var constructors = Node.GetType().GetConstructors();
+            foreach (var constructor in constructors)
             {
-                foreach (var parameter in constructor.GetParameters())
+                if (constructor.GetParameters().Length > 0)
                 {
-                    Port port = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, parameter.ParameterType);
-                    port.portName = parameter.Name;
-                    port.name = parameter.Name;
-                    InputPorts.Add(parameter.Name, port);
-                    inputContainer.Add(port);
+                    foreach (var parameter in constructor.GetParameters())
+                    {
+                        Port port = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, parameter.ParameterType);
+                        port.portName = parameter.Name;
+                        port.name = parameter.Name;
+                        InputPorts.Add(parameter.Name, port);
+                        inputContainer.Add(port);
+                    }
                 }
             }
         }

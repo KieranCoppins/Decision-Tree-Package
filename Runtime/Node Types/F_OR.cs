@@ -2,23 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class F_OR : F_LogicGate
+namespace KieranCoppins.DecisionTrees
 {
-    public F_OR(Function<bool> A, Function<bool> B) : base(A, B) { }
-
-    public override bool Invoke() => A.Invoke() || B.Invoke();
-
-    public override string GetSummary(BaseNodeView nodeView)
+    public class F_OR : F_LogicGate
     {
-        try
+        public F_OR(Function<bool> A, Function<bool> B) : base(A, B) { }
+
+        public override bool Invoke() => A.Invoke() || B.Invoke();
+
+        public override string GetSummary(BaseNodeView nodeView)
         {
-            nodeView.Error = "";
-            return $"{A.GetSummary(nodeView)} or {B.GetSummary(nodeView)}";
-        } 
-        catch (System.Exception e)
+            try
+            {
+                nodeView.Error = "";
+                return $"{A.GetSummary(nodeView)} or {B.GetSummary(nodeView)}";
+            }
+            catch (System.Exception e)
+            {
+                nodeView.Error = e.Message;
+                return "";
+            }
+        }
+
+        public override string GetDescription(BaseNodeView nodeView)
         {
-            nodeView.Error = e.Message;
-            return "";
+            return $"Returns true if {GetSummary(nodeView)}.";
         }
     }
 }
