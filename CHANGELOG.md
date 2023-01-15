@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed the title of the visual editor when using a custom version to "Decision Tree Editor (Custom)"
 - Updated RuntimeVisualisation.md to reflect the change in editor title
 
+### Fixed
+
+- Fixed sidebar anchor to be at the edge of the inspector
+
 ## 1.0.5
 
 ### Fixed
