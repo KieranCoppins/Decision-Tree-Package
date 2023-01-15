@@ -5,6 +5,7 @@ Here are all of the decision tree docs and tutorials. Consult the below contents
 - [Runtime Visualisation](RuntimeVisualisation.md)
 - [Advanced Node Creation](AdvancedNodeCreation.md)
 - [Action Flags](ActionFlags.md)
+- [Simple Node View Flags](SimpleNodeView.md)
 
 ## Samples
 This package does contain some samples which also contain their own READMEs. Be sure to check them out if you're just getting started. It provides some examples on how to implement this decision tree system into your own projects.

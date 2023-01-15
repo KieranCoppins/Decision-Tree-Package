@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added Action Manager to the component menu
 - Added a *simple node view* option in the tool menu. Simple node view displays the tree how it was, turning this off will show the inspector view inside each node and removes the inspector from the side
+- Added documentation for the simple node view
 
 ### Changed
 
