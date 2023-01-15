@@ -4,6 +4,11 @@
 
 A Unity package containing creating and editing decision trees. Including the decision tree visual editor.
 
+## Contents
+- [Features](#features)
+- [How to Install](#how-to-install)
+- [Documentation](Documentation~/README.md)
+
 ## Features
 
 ### Run-time Visualisation
