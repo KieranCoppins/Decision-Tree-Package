@@ -4,6 +4,36 @@
 
 A Unity package containing creating and editing decision trees. Including the decision tree visual editor.
 
+## Features
+
+### Run-time Visualisation
+![runtime visualisation](Documentation~/Resources/RuntimeVisualisation.png)
+
+The visual editor supports runtime visualisation where you can monitor individual trees at runtime and see which actions they are currently executing and have executed. This does require a small bit of setup but that is fully covered in the [documentation](Documentation~/RuntimeVisualisation.md) of this package.
+
+### Procedural Descriptions & Titles
+![procedural descriptions](Documentation~/Resources/ProceduralDescriptionShowcase.png)
+
+The visual editor will also include any descriptions you may include by overriding the `GetDescription` and `GetSummary` functions. This can help you keep track of what your nodes do at a glance without having to view the fields you have set on the node.
+
+### Real-time Erroring
+![realtime erroring](Documentation~/Resources//RealtimeErroringShowcase.png)
+
+The visual editor also provides errors to you in real time. Since the `GetDescription` and `GetSummary` functions are called in editor, you can attach `try-catch` statements and check for null values in your node. You can then assign error messages to the node view's error property and have them display in the editor!
+
+### Full Flexibility
+![advanced node creation](Documentation~/Resources/AdvancedNodeCreation.png)
+
+Sometimes you need a node that can take other nodes as parameters. This visual editor allows you to add as many parameter nodes to your node that you want. How to do this is outlined in the [documentation](Documentation~/AdvancedNodeCreation.md).
+
+### Built-in Action Manager
+
+This package also contains a built in action manager. This is a component that you can add to your AI and it will handle executing through the action queue and running it on the AI that it is attached to through coroutines
+
+### Sample Assets
+
+The package contains some sample assets to help you understand how to use this package in your project. Be sure to check it out with the unity package manager and read through the heavily commented sample scripts.
+
 ## How to Install
 
 There are three methods of installing this package: downloading manually, downloading with git url or downloading by name.
