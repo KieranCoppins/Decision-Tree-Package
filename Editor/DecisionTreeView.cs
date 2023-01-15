@@ -5,6 +5,9 @@ using UnityEngine.UIElements;
 using UnityEditor.Experimental.GraphView;
 using System.Linq;
 using KieranCoppins.DecisionTrees;
+using UnityEditor.Playables;
+using static UnityEditor.Experimental.GraphView.GraphView;
+using System;
 
 namespace KieranCoppins.DecisionTreesEditor
 {
@@ -34,6 +37,17 @@ namespace KieranCoppins.DecisionTreesEditor
             styleSheets.Add(styleSheet);
 
             graphViewChanged += OnGraphViewChanged;
+            viewTransformChanged += OnViewTransformChanged;
+            Undo.undoRedoPerformed += OnUndoRedo;
+        }
+
+        private void OnViewTransformChanged(GraphView graphView)
+        {
+            if (_tree != null)
+            {
+                _tree.ViewPosition = graphView.viewTransform.position;
+                _tree.ViewScale = graphView.viewTransform.scale;
+            }
         }
 
         /// <summary>
@@ -43,6 +57,9 @@ namespace KieranCoppins.DecisionTreesEditor
         public void PopulateView(DecisionTree tree, bool simpleNodeView = true)
         {
             _tree = tree;
+            if (_tree.ViewPosition != null && _tree.ViewScale != null)
+                UpdateViewTransform(_tree.ViewPosition, _tree.ViewScale);
+
             _simpleNodeView = simpleNodeView;
             graphViewChanged -= OnGraphViewChanged;
             DeleteElements(graphElements);
@@ -178,6 +195,10 @@ namespace KieranCoppins.DecisionTreesEditor
                         BaseNodeView inputNode = edge.input.node as BaseNodeView;
                         BaseNodeView outputNode = edge.output.node as BaseNodeView;
 
+                        Undo.RecordObject(inputNode.Node, "Decision Tree (Delete Connection)");
+                        Undo.RecordObject(outputNode.Node, "Decision Tree (Delete Connection)");
+                        Undo.RecordObject(_tree, "Decision Tree (Delete Connection)");
+
                         if (outputNode.Node is Decision)
                         {
                             Decision decisionNode = outputNode.Node as Decision;
@@ -212,6 +233,10 @@ namespace KieranCoppins.DecisionTreesEditor
                         inputNode.Description = inputNode.Node.GetDescription(inputNode);
                         outputNode.title = outputNode.Node.GetTitle();
                         outputNode.Description = outputNode.Node.GetDescription(outputNode);
+
+                        EditorUtility.SetDirty(inputNode.Node);
+                        EditorUtility.SetDirty(outputNode.Node);
+                        EditorUtility.SetDirty(_tree);
                     }
                 });
             }
@@ -222,6 +247,10 @@ namespace KieranCoppins.DecisionTreesEditor
                     // Create the edge graphically
                     BaseNodeView inputNode = elem.input.node as BaseNodeView;
                     BaseNodeView outputNode = elem.output.node as BaseNodeView;
+
+                    Undo.RecordObject(inputNode.Node, "Decision Tree (Create Connection)");
+                    Undo.RecordObject(outputNode.Node, "Decision Tree (Create Connection)");
+                    Undo.RecordObject(_tree, "Decision Tree (Create Connection)");
 
                     InputOutputPorts input = new(inputNode.Node.Guid, elem.input.name, outputNode.Node.Guid, elem.output.name);
 
@@ -272,6 +301,10 @@ namespace KieranCoppins.DecisionTreesEditor
                     outputNode.title = outputNode.Node.GetTitle();
                     outputNode.Description = outputNode.Node.GetDescription(outputNode);
                     _tree.Inputs.Add(input);
+
+                    EditorUtility.SetDirty(inputNode.Node);
+                    EditorUtility.SetDirty(outputNode.Node);
+                    EditorUtility.SetDirty(_tree);
                 });
             }
 
@@ -291,6 +324,12 @@ namespace KieranCoppins.DecisionTreesEditor
                 BaseNodeView nodeView = node as BaseNodeView;
                 nodeView.UpdateState();
             });
+        }
+
+        protected virtual void OnUndoRedo()
+        {
+            PopulateView(_tree, _simpleNodeView);
+            AssetDatabase.SaveAssets();
         }
     }
 }

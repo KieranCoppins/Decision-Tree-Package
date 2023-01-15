@@ -115,11 +115,24 @@ namespace KieranCoppins.DecisionTreesEditor
             // Clear our option menu off all items
             OptionMenu.menu.MenuItems().Clear();
 
+            // Undo-Redo buttons
+            OptionMenu.menu.AppendAction("Undo (Ctrl + Z)", action => Undo.PerformUndo(), action => DropdownMenuAction.Status.Normal);
+            OptionMenu.menu.AppendAction("Redo (Ctrl + Y)", action => Undo.PerformRedo(), action => DropdownMenuAction.Status.Normal);
+
+            OptionMenu.menu.AppendSeparator();
+
+
             // Re add items
             if (_simpleNodeView)
-                OptionMenu.menu.AppendAction("Simple node view", action => { _simpleNodeView = false; OnSimpleNodeViewChanged?.Invoke(_simpleNodeView); }, action => DropdownMenuAction.Status.Checked);
+                OptionMenu.menu.AppendAction("Simple node view", action => { 
+                    _simpleNodeView = false; 
+                    OnSimpleNodeViewChanged?.Invoke(_simpleNodeView); 
+                }, action => DropdownMenuAction.Status.Checked);
             else
-                OptionMenu.menu.AppendAction("Simple node view", action => { _simpleNodeView = true; OnSimpleNodeViewChanged?.Invoke(_simpleNodeView); }, action => DropdownMenuAction.Status.Normal);
+                OptionMenu.menu.AppendAction("Simple node view", action => { 
+                    _simpleNodeView = true; 
+                    OnSimpleNodeViewChanged?.Invoke(_simpleNodeView); 
+                }, action => DropdownMenuAction.Status.Normal);
         }
 
         void OnSimpleNodeClick(bool simpleNodeView)
