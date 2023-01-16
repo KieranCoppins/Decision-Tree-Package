@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed sidebar anchor to be at the edge of the inspector
 - Prevented the root node from being deleted / modified (Still draggable)
+- Fixed script templates by adding namespaces and missing abstract method overrides
 
 ## 1.0.5
 

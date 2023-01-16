@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using KieranCoppins.DecisionTrees;
 
-public class #SCRIPTNAME# : F_Condition
+public class #SCRIPTNAME# : Function<bool>
 {
     public override void Initialise<T>(T metaData)
     {
