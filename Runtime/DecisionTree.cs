@@ -11,6 +11,33 @@ namespace KieranCoppins.DecisionTrees
     [CreateAssetMenu(menuName = "Decision Tree/Decision Tree")]
     public class DecisionTree : ScriptableObject
     {
+        public Vector3 ViewPosition { 
+            get { return _viewPosition; } 
+            
+            set 
+            {
+                Undo.RecordObject(this, "Decision Tree (Change viewport location)");
+                _viewPosition = value; 
+                EditorUtility.SetDirty(this);
+            } 
+        }
+
+        [HideInInspector] [SerializeField] private Vector3 _viewPosition = Vector3.zero;
+
+        public Vector3 ViewScale { 
+            get { return _viewScale; } 
+            set 
+            {
+                Undo.RecordObject(this, "Decision Tree (Change viewport location)");
+                _viewScale = value;
+                EditorUtility.SetDirty(this);
+            } 
+        }
+
+        public bool IsClone { get; private set; }
+
+        [HideInInspector][SerializeField] private Vector3 _viewScale = Vector3.one;
+
         [HideInInspector] public RootNode Root;
 
         /// Editor Values
@@ -62,6 +89,7 @@ namespace KieranCoppins.DecisionTrees
             {
                 tree.Nodes.Add(n);
             });
+            tree.IsClone= true;
             return tree;
         }
 
@@ -78,9 +106,13 @@ namespace KieranCoppins.DecisionTrees
             node.Guid = GUID.Generate().ToString();
             node.PositionalData.xMin = creationPos.x;
             node.PositionalData.yMin = creationPos.y;
+
+            Undo.RecordObject(this, "Decision Tree (Create Node)");
+
             Nodes.Add(node);
 
             AssetDatabase.AddObjectToAsset(node, this);
+            Undo.RegisterCreatedObjectUndo(node, "Decision Tree (Create Node)");
             AssetDatabase.SaveAssets();
             return node;
         }
@@ -91,8 +123,10 @@ namespace KieranCoppins.DecisionTrees
         /// <param name="node">The node to delete</param>
         public void DeleteNode(DecisionTreeEditorNodeBase node)
         {
+            Undo.RecordObject(this, "Decision Tree (Delete Node)");
             Nodes.Remove(node);
-            AssetDatabase.RemoveObjectFromAsset(node);
+
+            Undo.DestroyObjectImmediate(node);
             AssetDatabase.SaveAssets();
         }
     }
@@ -439,8 +473,7 @@ namespace KieranCoppins.DecisionTrees
             }
         }
 
-
-        public BaseNodeView(DecisionTreeEditorNodeBase node) : base("Packages/com.kierancoppins.decision-trees/Editor/DecisionTreeNodeView.uxml")
+        public BaseNodeView(DecisionTreeEditorNodeBase node, string uxml = "Packages/com.kierancoppins.decision-trees/Editor/DecisionTreeNodeView.uxml") : base(uxml)
         {
             Node = node;
             Node.OnValidateCallback += OnValidate;
@@ -463,7 +496,9 @@ namespace KieranCoppins.DecisionTrees
         public override void SetPosition(Rect newPos)
         {
             base.SetPosition(newPos);
+            Undo.RecordObject(Node, "Decision Tree (Set Position)");
             Node.PositionalData = newPos;
+            EditorUtility.SetDirty(Node);
         }
 
         public override void OnSelected()

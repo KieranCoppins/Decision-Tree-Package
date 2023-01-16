@@ -177,10 +177,10 @@
 }
 
 .finished #state-border {
-    border-left-color: rgba(107, 147, 63, 255);
-    border-right-color: rgba(107, 147, 63, 255);
-    border-top-color: rgba(107, 147, 63, 255);
-    border-bottom-color: rgba(107, 147, 63, 255);
+    border-left-color: rgb(107, 147, 63);
+    border-right-color: rgb(107, 147, 63);
+    border-top-color: rgb(107, 147, 63);
+    border-bottom-color: rgb(107, 147, 63);
     border-left-width: 3px;
     border-right-width: 3px;
     border-top-width: 3px;
@@ -196,8 +196,27 @@
     border-bottom-left-radius: 8px;
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
-    border-left-color: rgba(147, 127, 63, 255);
-    border-right-color: rgba(147, 127, 63, 255);
-    border-top-color: rgba(147, 127, 63, 255);
-    border-bottom-color: rgba(147, 127, 63, 255);
+    border-left-color: rgb(147, 127, 63);
+    border-right-color: rgb(147, 127, 63);
+    border-top-color: rgb(147, 127, 63);
+    border-bottom-color: rgb(147, 127, 63);
+}
+
+.simple #description-container {
+}
+
+.complex #description-container {
+    display: none;
+}
+
+.simple #inspector-view {
+    display: none;
+}
+
+.complex #inspector-view {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    min-width: 300px;
 }

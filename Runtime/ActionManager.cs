@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace KieranCoppins.DecisionTrees
 {
+    [AddComponentMenu("AI/Action Manager")]
     public class ActionManager : MonoBehaviour
     {
         private Queue<ActionPacket> _actionQueue = new Queue<ActionPacket>();

@@ -25,7 +25,10 @@ namespace KieranCoppins.DecisionTreesEditor
 
             editor = Editor.CreateEditor(nodeView.Node);
 
-            IMGUIContainer container = new(() => { editor.OnInspectorGUI(); });
+            IMGUIContainer container = new(() => { 
+                if (editor.target)
+                    editor.OnInspectorGUI(); 
+            });
             Add(container);
         }
     }

@@ -5,6 +5,9 @@ using UnityEngine.UIElements;
 using UnityEditor.Experimental.GraphView;
 using System.Linq;
 using KieranCoppins.DecisionTrees;
+using UnityEditor.Playables;
+using static UnityEditor.Experimental.GraphView.GraphView;
+using System;
 
 namespace KieranCoppins.DecisionTreesEditor
 {
@@ -14,23 +17,61 @@ namespace KieranCoppins.DecisionTreesEditor
 
         public new class UxmlFactory : UxmlFactory<DecisionTreeView, UxmlTraits> { };
 
+        public bool SimpleNodeView
+        {
+            get 
+            {
+                return _simpleNodeView;
+            }
+            set
+            {
+                _simpleNodeView = value;
+                PopulateView(_tree);
+            }
+        }
+        private bool _simpleNodeView = true;
+
         /// <summary>
         /// The tree that is being displayed
         /// </summary>
         private DecisionTree _tree;
 
+        private SelectionDragger _selectionDragger;
+        private RectangleSelector _rectangleSelector;
+
         public DecisionTreeView()
         {
             Insert(0, new GridBackground());
 
+            _selectionDragger = new SelectionDragger();
+            _rectangleSelector = new RectangleSelector();
+
             this.AddManipulator(new ContentZoomer());
             this.AddManipulator(new ContentDragger());
-            this.AddManipulator(new SelectionDragger());
-            this.AddManipulator(new RectangleSelector());
+            this.AddManipulator(_selectionDragger);
+            this.AddManipulator(_rectangleSelector);
 
             var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Packages/com.kierancoppins.decision-trees/Editor/DecisionTreeEditor.uss");
             styleSheets.Add(styleSheet);
 
+            graphViewChanged += OnGraphViewChanged;
+            viewTransformChanged += OnViewTransformChanged;
+            Undo.undoRedoPerformed += OnUndoRedo;
+        }
+
+        private void OnViewTransformChanged(GraphView graphView)
+        {
+            if (_tree != null)
+            {
+                _tree.ViewPosition = graphView.viewTransform.position;
+                _tree.ViewScale = graphView.viewTransform.scale;
+            }
+        }
+
+        public void ClearView()
+        {
+            graphViewChanged -= OnGraphViewChanged;
+            DeleteElements(graphElements);
             graphViewChanged += OnGraphViewChanged;
         }
 
@@ -41,6 +82,9 @@ namespace KieranCoppins.DecisionTreesEditor
         public void PopulateView(DecisionTree tree)
         {
             _tree = tree;
+            if (_tree.ViewPosition != null && _tree.ViewScale != null)
+                UpdateViewTransform(_tree.ViewPosition, _tree.ViewScale);
+
             graphViewChanged -= OnGraphViewChanged;
             DeleteElements(graphElements);
             graphViewChanged += OnGraphViewChanged;
@@ -69,12 +113,22 @@ namespace KieranCoppins.DecisionTreesEditor
                 if (inputNode != null && outputNode != null)
                 {
                     Edge edge = outputNode.OutputPorts[input.OutputPortName].ConnectTo(inputNode.InputPorts[input.InputPortName]);
+                    if (_tree.IsClone)
+                        edge.capabilities = Capabilities.Selectable;
+
                     inputNode.ConnectedNodes.Add(outputNode);
                     outputNode.ConnectedNodes.Add(inputNode);
                     AddElement(edge);
                 }
             });
 
+            // Check if we are trying to modify an instanced version of the decision tree
+            if (_tree.IsClone)
+            {
+                this.RemoveManipulator(_rectangleSelector);
+                this.RemoveManipulator(_selectionDragger);
+            }
+            this.Q<Label>("Title").text = _tree.IsClone ? "Tree View (Read-Only)" : "Tree View";
         }
 
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
@@ -130,6 +184,14 @@ namespace KieranCoppins.DecisionTreesEditor
         {
             DecisionTreeNodeView nodeView = new(node);
             nodeView.OnNodeSelected = OnNodeSelected;
+            nodeView.AddToClassList(SimpleNodeView ? "simple" : "complex");
+
+            if (node is RootNode)
+                nodeView.capabilities = Capabilities.Selectable | Capabilities.Movable | Capabilities.Ascendable | Capabilities.Snappable;
+
+            if (_tree.IsClone)
+                nodeView.capabilities = Capabilities.Selectable;
+
             AddElement(nodeView);
         }
 
@@ -141,6 +203,9 @@ namespace KieranCoppins.DecisionTreesEditor
         {
             FunctionNodeView nodeView = new(node);
             nodeView.OnNodeSelected = OnNodeSelected;
+            nodeView.AddToClassList(SimpleNodeView ? "simple" : "complex");
+            if (_tree.IsClone)
+                nodeView.capabilities = Capabilities.Selectable;
             AddElement(nodeView);
         }
 
@@ -172,6 +237,10 @@ namespace KieranCoppins.DecisionTreesEditor
                         Edge edge = elem as Edge;
                         BaseNodeView inputNode = edge.input.node as BaseNodeView;
                         BaseNodeView outputNode = edge.output.node as BaseNodeView;
+
+                        Undo.RecordObject(inputNode.Node, "Decision Tree (Delete Connection)");
+                        Undo.RecordObject(outputNode.Node, "Decision Tree (Delete Connection)");
+                        Undo.RecordObject(_tree, "Decision Tree (Delete Connection)");
 
                         if (outputNode.Node is Decision)
                         {
@@ -207,6 +276,10 @@ namespace KieranCoppins.DecisionTreesEditor
                         inputNode.Description = inputNode.Node.GetDescription(inputNode);
                         outputNode.title = outputNode.Node.GetTitle();
                         outputNode.Description = outputNode.Node.GetDescription(outputNode);
+
+                        EditorUtility.SetDirty(inputNode.Node);
+                        EditorUtility.SetDirty(outputNode.Node);
+                        EditorUtility.SetDirty(_tree);
                     }
                 });
             }
@@ -217,6 +290,10 @@ namespace KieranCoppins.DecisionTreesEditor
                     // Create the edge graphically
                     BaseNodeView inputNode = elem.input.node as BaseNodeView;
                     BaseNodeView outputNode = elem.output.node as BaseNodeView;
+
+                    Undo.RecordObject(inputNode.Node, "Decision Tree (Create Connection)");
+                    Undo.RecordObject(outputNode.Node, "Decision Tree (Create Connection)");
+                    Undo.RecordObject(_tree, "Decision Tree (Create Connection)");
 
                     InputOutputPorts input = new(inputNode.Node.Guid, elem.input.name, outputNode.Node.Guid, elem.output.name);
 
@@ -267,6 +344,10 @@ namespace KieranCoppins.DecisionTreesEditor
                     outputNode.title = outputNode.Node.GetTitle();
                     outputNode.Description = outputNode.Node.GetDescription(outputNode);
                     _tree.Inputs.Add(input);
+
+                    EditorUtility.SetDirty(inputNode.Node);
+                    EditorUtility.SetDirty(outputNode.Node);
+                    EditorUtility.SetDirty(_tree);
                 });
             }
 
@@ -286,6 +367,12 @@ namespace KieranCoppins.DecisionTreesEditor
                 BaseNodeView nodeView = node as BaseNodeView;
                 nodeView.UpdateState();
             });
+        }
+
+        protected virtual void OnUndoRedo()
+        {
+            PopulateView(_tree);
+            AssetDatabase.SaveAssets();
         }
     }
 }
