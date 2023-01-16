@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.1.0] - 2023-01-16
+
 ### Added
 
 - Added Action Manager to the component menu
@@ -27,13 +29,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Prevented the root node from being deleted / modified (Still draggable)
 - Fixed script templates by adding namespaces and missing abstract method overrides
 
-## 1.0.5
+## [1.0.5] - 2023-01-15
 
 ### Fixed
 
 - Fixed visual Editor with namespace changes
 
-## 1.0.4
+## [1.0.4] - 2023-01-15
 
 ### Added
 
@@ -46,23 +48,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed Generic Helpers from 1.0.1 to 1.0.2
 - Changed all generic helper reference to use the newly added namespace
 
-## 1.0.3
+## [1.0.3] - 2023-01-15
 
 ### Added
 
 - Updated generic helpers to 1.0.1
 
-## 1.0.2
+## [1.0.2] - 2023-01-15
 
 ### Fixed
 
 - Banner path in README
 
-## 1.0.1
+## [1.0.1] - 2023-01-15
 
 ### Fixed
 
 - Generic helpers dependency name
 
-## 1.0.0
+## [1.0.0] - 2023-01-15
 - The first initial release of the Decision Tree Package
