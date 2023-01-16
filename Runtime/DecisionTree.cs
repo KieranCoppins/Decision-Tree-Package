@@ -34,6 +34,8 @@ namespace KieranCoppins.DecisionTrees
             } 
         }
 
+        public bool IsClone { get; private set; }
+
         [HideInInspector][SerializeField] private Vector3 _viewScale = Vector3.one;
 
         [HideInInspector] public RootNode Root;
@@ -87,6 +89,7 @@ namespace KieranCoppins.DecisionTrees
             {
                 tree.Nodes.Add(n);
             });
+            tree.IsClone= true;
             return tree;
         }
 

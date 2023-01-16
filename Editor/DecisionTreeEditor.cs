@@ -12,7 +12,6 @@ namespace KieranCoppins.DecisionTreesEditor
     /// </summary>
     public class DecisionTreeEditor : EditorWindow
     {
-
         private InspectorView _inspectorView;
 
         private VisualElement _leftPanel;
@@ -97,6 +96,7 @@ namespace KieranCoppins.DecisionTreesEditor
             switch (obj)
             {
                 case PlayModeStateChange.EnteredEditMode:
+                    TreeView.ClearView();
                     OnSelectionChange();
                     break;
                 case PlayModeStateChange.ExitingEditMode:
@@ -145,8 +145,7 @@ namespace KieranCoppins.DecisionTreesEditor
             // Update our options
             UpdateOptionMenu();
 
-            // Update our node view
-            OnSelectionChange();
+            TreeView.SimpleNodeView = simpleNodeView;
         }
 
 
@@ -154,7 +153,7 @@ namespace KieranCoppins.DecisionTreesEditor
         {
             DecisionTree decisionTree = Selection.activeObject as DecisionTree;
             if (decisionTree && AssetDatabase.CanOpenAssetInEditor(decisionTree.GetInstanceID()))
-                TreeView.PopulateView(decisionTree, _simpleNodeView);
+                TreeView.PopulateView(decisionTree);
         }
 
         /// <summary>

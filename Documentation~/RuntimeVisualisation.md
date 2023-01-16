@@ -6,9 +6,11 @@ This does require a small amount of setup as it depends entirely on which object
 
 ### Creating a Custom Editor with your changes
 So first we need to create a new editor that inherits the one provided in the package. If you don't have one already, create an Editor folder in the root of your assets directory.
-Inside this editor folder, we need to create a new custom editor. You can name this whatever you want but make sure it inherits `DecisionTreeEditor`. Here is an example empty class:
+Inside this editor folder, we need to create a new custom editor. You can name this whatever you want but make sure it inherits `DecisionTreeEditor` and dont forget to include the decision tree editor namespace `KieranCoppins.DecisionTreesEditor` Here is an example empty class:
 
 ```c#
+using KieranCoppins.DecisionTreeEditor;
+
 public class CustomDecisionTreeViewer : DecisionTreeEditor
 {
 
@@ -25,17 +27,17 @@ public override void OnSelectionChange()
     if (!decisionTree)
     {
         DTRunner dtRunner = Selection.activeObject?.GetComponent<DTRunner>();
-        if (dtRunner?.decisionTree && Application.isPlaying)
-            treeView.PopulateView(dtRunner.decisionTree);
+        if (dtRunner?.DecisionTree && Application.isPlaying)
+            TreeView.PopulateView(dtRunner.DecisionTree);
     }
     else
     {
-        // This is actually pre-existing inside DecisionTreeEditor
-        if (decisionTree && AssetDatabase.CanOpenAssetInEditor(decisionTree.GetInstanceID()))
-        treeView.PopulateView(decisionTree);
+        base.OnSelectionChange();
     }
 }
 ```
+
+**Note**: If your IDE hasn't done it automatically make sure to add `using Unity.VisualScripting` to access the `GetComponent` function of `Selection.activeObject`.
 
 To begin with we get our active selection and try cast it directly as a Decision Tree. If we have selected a decision tree then we can just load that one like normal. However, if the cast returns null that means we haven't selected a decision tree. Therefore we *might* have selected our object that has a component that uses the decision tree.
 

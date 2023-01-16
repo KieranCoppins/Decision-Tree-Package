@@ -14,15 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added documentation for the simple node view
 - Added Undo/Redo functionality to the creation/deletion of nodes & connections and in changing viewport position/scale
 - Added saving viewport position & scale per tree
+- Added readonly mode when accessing an instance of a tree. Readonly mode only allows for nodes to be selected and fields inside the inspector to be changed. However, these changes will not carry over to the tree itself as it is only modifying an instance of the tree.
 
 ### Changed
 
 - Changed the title of the visual editor when using a custom version to "Decision Tree Editor (Custom)"
-- Updated RuntimeVisualisation.md to reflect the change in editor title
+- Updated RuntimeVisualisation.md to include the newly added namespace
 
 ### Fixed
 
 - Fixed sidebar anchor to be at the edge of the inspector
+- Prevented the root node from being deleted / modified (Still draggable)
 
 ## 1.0.5
 

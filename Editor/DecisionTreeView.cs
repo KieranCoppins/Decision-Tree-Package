@@ -17,21 +17,39 @@ namespace KieranCoppins.DecisionTreesEditor
 
         public new class UxmlFactory : UxmlFactory<DecisionTreeView, UxmlTraits> { };
 
-        private bool _simpleNodeView;
+        public bool SimpleNodeView
+        {
+            get 
+            {
+                return _simpleNodeView;
+            }
+            set
+            {
+                _simpleNodeView = value;
+                PopulateView(_tree);
+            }
+        }
+        private bool _simpleNodeView = true;
 
         /// <summary>
         /// The tree that is being displayed
         /// </summary>
         private DecisionTree _tree;
 
+        private SelectionDragger _selectionDragger;
+        private RectangleSelector _rectangleSelector;
+
         public DecisionTreeView()
         {
             Insert(0, new GridBackground());
 
+            _selectionDragger = new SelectionDragger();
+            _rectangleSelector = new RectangleSelector();
+
             this.AddManipulator(new ContentZoomer());
             this.AddManipulator(new ContentDragger());
-            this.AddManipulator(new SelectionDragger());
-            this.AddManipulator(new RectangleSelector());
+            this.AddManipulator(_selectionDragger);
+            this.AddManipulator(_rectangleSelector);
 
             var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Packages/com.kierancoppins.decision-trees/Editor/DecisionTreeEditor.uss");
             styleSheets.Add(styleSheet);
@@ -50,17 +68,23 @@ namespace KieranCoppins.DecisionTreesEditor
             }
         }
 
+        public void ClearView()
+        {
+            graphViewChanged -= OnGraphViewChanged;
+            DeleteElements(graphElements);
+            graphViewChanged += OnGraphViewChanged;
+        }
+
         /// <summary>
         /// Populate our tree view
         /// </summary>
         /// <param name="tree">The tree to populate the tree view with</param>
-        public void PopulateView(DecisionTree tree, bool simpleNodeView = true)
+        public void PopulateView(DecisionTree tree)
         {
             _tree = tree;
             if (_tree.ViewPosition != null && _tree.ViewScale != null)
                 UpdateViewTransform(_tree.ViewPosition, _tree.ViewScale);
 
-            _simpleNodeView = simpleNodeView;
             graphViewChanged -= OnGraphViewChanged;
             DeleteElements(graphElements);
             graphViewChanged += OnGraphViewChanged;
@@ -89,12 +113,22 @@ namespace KieranCoppins.DecisionTreesEditor
                 if (inputNode != null && outputNode != null)
                 {
                     Edge edge = outputNode.OutputPorts[input.OutputPortName].ConnectTo(inputNode.InputPorts[input.InputPortName]);
+                    if (_tree.IsClone)
+                        edge.capabilities = Capabilities.Selectable;
+
                     inputNode.ConnectedNodes.Add(outputNode);
                     outputNode.ConnectedNodes.Add(inputNode);
                     AddElement(edge);
                 }
             });
 
+            // Check if we are trying to modify an instanced version of the decision tree
+            if (_tree.IsClone)
+            {
+                this.RemoveManipulator(_rectangleSelector);
+                this.RemoveManipulator(_selectionDragger);
+            }
+            this.Q<Label>("Title").text = _tree.IsClone ? "Tree View (Read-Only)" : "Tree View";
         }
 
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
@@ -150,7 +184,14 @@ namespace KieranCoppins.DecisionTreesEditor
         {
             DecisionTreeNodeView nodeView = new(node);
             nodeView.OnNodeSelected = OnNodeSelected;
-            nodeView.AddToClassList(_simpleNodeView ? "simple" : "complex");
+            nodeView.AddToClassList(SimpleNodeView ? "simple" : "complex");
+
+            if (node is RootNode)
+                nodeView.capabilities = Capabilities.Selectable | Capabilities.Movable | Capabilities.Ascendable | Capabilities.Snappable;
+
+            if (_tree.IsClone)
+                nodeView.capabilities = Capabilities.Selectable;
+
             AddElement(nodeView);
         }
 
@@ -162,7 +203,9 @@ namespace KieranCoppins.DecisionTreesEditor
         {
             FunctionNodeView nodeView = new(node);
             nodeView.OnNodeSelected = OnNodeSelected;
-            nodeView.AddToClassList(_simpleNodeView ? "simple" : "complex");
+            nodeView.AddToClassList(SimpleNodeView ? "simple" : "complex");
+            if (_tree.IsClone)
+                nodeView.capabilities = Capabilities.Selectable;
             AddElement(nodeView);
         }
 
@@ -328,7 +371,7 @@ namespace KieranCoppins.DecisionTreesEditor
 
         protected virtual void OnUndoRedo()
         {
-            PopulateView(_tree, _simpleNodeView);
+            PopulateView(_tree);
             AssetDatabase.SaveAssets();
         }
     }
