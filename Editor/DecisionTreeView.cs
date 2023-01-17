@@ -128,6 +128,14 @@ namespace KieranCoppins.DecisionTreesEditor
                 this.RemoveManipulator(_rectangleSelector);
                 this.RemoveManipulator(_selectionDragger);
             }
+            else
+            {
+                if (_selectionDragger.target == null && _rectangleSelector.target == null) 
+                {
+                    this.AddManipulator(_selectionDragger);
+                    this.AddManipulator(_rectangleSelector);
+                }
+            }
             this.Q<Label>("Title").text = _tree.IsClone ? "Tree View (Read-Only)" : "Tree View";
         }
 
