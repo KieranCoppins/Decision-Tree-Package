@@ -28,7 +28,7 @@ public override void OnSelectionChange()
     {
         DTRunner dtRunner = Selection.activeObject?.GetComponent<DTRunner>();
         if (dtRunner?.DecisionTree && Application.isPlaying)
-            TreeView.PopulateView(dtRunner.DecisionTree);
+            TreeView?.PopulateView(dtRunner.DecisionTree);
     }
     else
     {
@@ -41,7 +41,7 @@ public override void OnSelectionChange()
 
 To begin with we get our active selection and try cast it directly as a Decision Tree. If we have selected a decision tree then we can just load that one like normal. However, if the cast returns null that means we haven't selected a decision tree. Therefore we *might* have selected our object that has a component that uses the decision tree.
 
-To extract the decision tree we just have to get the comonent that has it from our selected object. Then check if our component has a decision tree set. We also want to make sure we are in playmode so we have loaded the cloned version of the tree that the component would be using. Once we have confirmed this we can just populate the view with that decision tree rather than the saved decision tree in the asset database.
+To extract the decision tree we just have to get the comonent that has it from our selected object. Then check if our component has a decision tree set. We also want to make sure we are in playmode so we have loaded the cloned version of the tree that the component would be using. Once we have confirmed this we can just populate the view with that decision tree rather than the saved decision tree in the asset database. We only want to call the `PopulateView` function if our TreeView isn't null. Sometimes this `OnSelectionChange` can fire before the TreeView has been initialised. This will prevent a null exception error.
 
 You can check if the visual editor is using your custom one by checking the title of the decision tree editor. It should contain (custom) at the end of the title. You can also just put a debug log inside your custom editor's OnSelectionChange.
 
