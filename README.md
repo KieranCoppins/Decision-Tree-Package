@@ -8,6 +8,7 @@ A Unity package containing creating and editing decision trees. Including the de
 - [Features](#features)
 - [How to Install](#how-to-install)
 - [Documentation](Documentation~/README.md)
+- [Changelog](CHANGELOG.md)
 
 ## Features
 

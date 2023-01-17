@@ -9,8 +9,13 @@ namespace KieranCoppins.DecisionTreesEditor
 {
     public class FunctionNodeView : BaseNodeView
     {
+        private InspectorView _nodeInspectorView;
+
         public FunctionNodeView(object function) : base(function as DecisionTreeEditorNodeBase)
         {
+            _nodeInspectorView = this.Q<InspectorView>();
+            _nodeInspectorView.UpdateSelection(this);
+
             CreateInputPorts();
 
             // Function nodes should only ever have 1 output node

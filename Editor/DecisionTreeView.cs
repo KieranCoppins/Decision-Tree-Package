@@ -114,7 +114,7 @@ namespace KieranCoppins.DecisionTreesEditor
                 {
                     Edge edge = outputNode.OutputPorts[input.OutputPortName].ConnectTo(inputNode.InputPorts[input.InputPortName]);
                     if (_tree.IsClone)
-                        edge.capabilities = Capabilities.Selectable;
+                        edge.SetEnabled(false);
 
                     inputNode.ConnectedNodes.Add(outputNode);
                     outputNode.ConnectedNodes.Add(inputNode);
@@ -127,6 +127,14 @@ namespace KieranCoppins.DecisionTreesEditor
             {
                 this.RemoveManipulator(_rectangleSelector);
                 this.RemoveManipulator(_selectionDragger);
+            }
+            else
+            {
+                if (_selectionDragger.target == null && _rectangleSelector.target == null) 
+                {
+                    this.AddManipulator(_selectionDragger);
+                    this.AddManipulator(_rectangleSelector);
+                }
             }
             this.Q<Label>("Title").text = _tree.IsClone ? "Tree View (Read-Only)" : "Tree View";
         }

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.1.1] - 2023-01-17
+
+### Fixed
+
+- Fixed being unable to manipulate nodes after leaving readonly mode
+- Fixed edges from being editable in readonly mode
+- Fixed null exception errors sometimes occuring inbetween play and edit mode
+- Fixed function nodes not showing inspector view inside their body when simple node view was false
+
 ## [1.1.0] - 2023-01-16
 
 ### Added
