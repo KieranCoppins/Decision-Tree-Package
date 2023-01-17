@@ -153,7 +153,7 @@ namespace KieranCoppins.DecisionTreesEditor
         {
             DecisionTree decisionTree = Selection.activeObject as DecisionTree;
             if (decisionTree && AssetDatabase.CanOpenAssetInEditor(decisionTree.GetInstanceID()))
-                TreeView.PopulateView(decisionTree);
+                TreeView?.PopulateView(decisionTree);
         }
 
         /// <summary>

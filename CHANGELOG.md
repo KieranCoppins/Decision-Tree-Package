@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed being unable to manipulate nodes after leaving readonly mode
+- Fixed edges from being editable in readonly mode
+- Fixed null exception errors sometimes occuring inbetween play and edit mode
 
 ## [1.1.0] - 2023-01-16
 

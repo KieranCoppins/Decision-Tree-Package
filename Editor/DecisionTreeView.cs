@@ -114,7 +114,7 @@ namespace KieranCoppins.DecisionTreesEditor
                 {
                     Edge edge = outputNode.OutputPorts[input.OutputPortName].ConnectTo(inputNode.InputPorts[input.InputPortName]);
                     if (_tree.IsClone)
-                        edge.capabilities = Capabilities.Selectable;
+                        edge.SetEnabled(false);
 
                     inputNode.ConnectedNodes.Add(outputNode);
                     outputNode.ConnectedNodes.Add(inputNode);
