@@ -2,7 +2,7 @@
 
 # Decision-Tree-Package
 
-A Unity package containing creating and editing decision trees. Including the decision tree visual editor.
+An open source Unity package for creating Decision Trees with a visual editor. The package comes with some samples to help teach users how to use it and an action manager to handle executing the results of the decision tree. Be sure to checkout the [video showcase](https://youtu.be/F6SGtkVm7Vo) which shows some features of the editor.
 
 ## Contents
 - [Features](#features)
