@@ -224,6 +224,8 @@ namespace KieranCoppins.DecisionTreesEditor
         /// <returns></returns>
         private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange)
         {
+            List<Edge> edgesToIgnore = new List<Edge>();
+
             if (graphViewChange.elementsToRemove != null)
             {
                 graphViewChange.elementsToRemove.ForEach(elem =>
@@ -330,35 +332,48 @@ namespace KieranCoppins.DecisionTreesEditor
                     else
                     {
                         var constructors = inputNode.Node.GetType().GetConstructors();
+                        bool validEdge = false;
                         foreach (var constructor in constructors)
                         {
                             if (constructor.GetParameters().Length > 0)
                             {
                                 foreach (var param in constructor.GetParameters())
                                 {
-                                    if (elem.input.portType == param.ParameterType && elem.input.portName == param.Name)
+                                    if (elem.input.portType == param.ParameterType.GetGenericArguments()[0] && elem.input.portName == param.Name && elem.output.portType == elem.input.portType)
                                     {
                                         GenericHelpers.GenericHelpers.SetVariable(inputNode.Node, outputNode.Node, param.Name);
+                                        validEdge = true;
                                     }
                                 }
                             }
                         }
+
+                        if (validEdge)
+                        {
+                            outputNode.ConnectedNodes.Add(inputNode);
+                            inputNode.ConnectedNodes.Add(outputNode);
+                            inputNode.title = inputNode.Node.GetTitle();
+                            inputNode.Description = inputNode.Node.GetDescription(inputNode);
+                            outputNode.title = outputNode.Node.GetTitle();
+                            outputNode.Description = outputNode.Node.GetDescription(outputNode);
+                            _tree.Inputs.Add(input);
+
+                            EditorUtility.SetDirty(inputNode.Node);
+                            EditorUtility.SetDirty(outputNode.Node);
+                            EditorUtility.SetDirty(_tree);
+                        }
+                        else
+                        {
+                            edgesToIgnore.Add(elem);
+                        }
                     }
-
-                    outputNode.ConnectedNodes.Add(inputNode);
-                    inputNode.ConnectedNodes.Add(outputNode);
-                    inputNode.title = inputNode.Node.GetTitle();
-                    inputNode.Description = inputNode.Node.GetDescription(inputNode);
-                    outputNode.title = outputNode.Node.GetTitle();
-                    outputNode.Description = outputNode.Node.GetDescription(outputNode);
-                    _tree.Inputs.Add(input);
-
-                    EditorUtility.SetDirty(inputNode.Node);
-                    EditorUtility.SetDirty(outputNode.Node);
-                    EditorUtility.SetDirty(_tree);
                 });
             }
 
+            foreach (var elem in edgesToIgnore)
+            {
+                graphViewChange.edgesToCreate.Remove(elem);
+            }
             // Save our asset on any changes
             EditorUtility.SetDirty(_tree);
             AssetDatabase.SaveAssets();

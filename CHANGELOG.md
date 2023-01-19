@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Colours depending on function data types
+
+### Fixed
+
+- Fixed Function nodes and parameter inputs of mismatching types being able to connect
+
 ## [1.1.1] - 2023-01-17
 
 ### Fixed

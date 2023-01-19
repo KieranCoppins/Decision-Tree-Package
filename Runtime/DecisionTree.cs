@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
+using System.Data.Common;
 
 namespace KieranCoppins.DecisionTrees
 {
@@ -402,6 +403,21 @@ namespace KieranCoppins.DecisionTrees
     /// </summary>
     public abstract class BaseNodeView : Node
     {
+        /// <summary>
+        /// A dictionary containing datatype to colours
+        /// </summary>
+        public static IDictionary<Type, Color> TypeColourDictionary = new Dictionary<Type, Color>()
+        {
+            {typeof(float), new Color(.243f, .980f, .265f) },
+            {typeof(int), new Color(.243f, .980f, .265f) },
+            {typeof(decimal), new Color(.243f, .980f, .265f) },
+            {typeof(long), new Color(.243f, .980f, .265f) },
+            {typeof(bool), new Color(.980f, .243f, .243f)},
+            {typeof(string), new Color(.936f, .243f, .980f) },
+            {typeof(char), new Color(.936f, .243f, .980f) },
+            {typeof(Vector2), new Color(.690f, .980f, .243f) },
+            {typeof(Vector3), new Color(.690f, .980f, .243f) },
+        };
         public Action<BaseNodeView> OnNodeSelected { get; set; }
 
         /// <summary>
@@ -547,8 +563,11 @@ namespace KieranCoppins.DecisionTrees
             }
         }
 
+        protected static Color GetColorForType(Type type)
+        {
+            return TypeColourDictionary.ContainsKey(type.GetGenericArguments()[0]) ? TypeColourDictionary[type.GetGenericArguments()[0]] : new Color(.243f, .265f, .980f);
+        }
     }
-
     public class EnumFlagsAttribute : PropertyAttribute
     {
 
