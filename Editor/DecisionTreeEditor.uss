@@ -9,3 +9,11 @@ GridBackground {
     width: 100%;
     height: 100%;
 }
+
+.edge.LogicEdge {
+    --edge-width: 6;
+}
+
+.edge.LogicEdge:hover {
+    --edge-width: 8;
+}

@@ -116,6 +116,9 @@ namespace KieranCoppins.DecisionTreesEditor
                     if (_tree.IsClone)
                         edge.SetEnabled(false);
 
+                    if (!GenericHelpers.GenericHelpers.IsSubClassOfRawGeneric(typeof(Function<>), inputNode.Node.GetType()) && !GenericHelpers.GenericHelpers.IsSubClassOfRawGeneric(typeof(Function<>), outputNode.Node.GetType()))
+                        edge.AddToClassList("LogicEdge");
+
                     inputNode.ConnectedNodes.Add(outputNode);
                     outputNode.ConnectedNodes.Add(inputNode);
                     AddElement(edge);
@@ -297,6 +300,8 @@ namespace KieranCoppins.DecisionTreesEditor
             {
                 graphViewChange.edgesToCreate.ForEach(elem =>
                 {
+                    bool validEdge = false;
+
                     // Create the edge graphically
                     BaseNodeView inputNode = elem.input.node as BaseNodeView;
                     BaseNodeView outputNode = elem.output.node as BaseNodeView;
@@ -314,11 +319,19 @@ namespace KieranCoppins.DecisionTreesEditor
                     {
                         Decision decisionNode = outputNode.Node as Decision;
                         if (input.OutputPortName == "TRUE")
+                        {
                             decisionNode.TrueNode = inputNode.Node as DecisionTreeNode;
+                            validEdge = true;
+                        }
                         else if (input.OutputPortName == "FALSE")
+                        {
                             decisionNode.FalseNode = inputNode.Node as DecisionTreeNode;
+                            validEdge = true;
+                        }
                         else
                             Debug.LogError("Decision node was set from an invalid output?!");
+
+                        elem.AddToClassList("LogicEdge");
                     }
 
                     // If we're a root node
@@ -326,13 +339,14 @@ namespace KieranCoppins.DecisionTreesEditor
                     {
                         RootNode rootNode = outputNode.Node as RootNode;
                         rootNode.Child = inputNode.Node as DecisionTreeNode;
+                        validEdge = true;
+                        elem.AddToClassList("LogicEdge");
                     }
 
                     // Otherwise we can add these dynamically
                     else
                     {
                         var constructors = inputNode.Node.GetType().GetConstructors();
-                        bool validEdge = false;
                         foreach (var constructor in constructors)
                         {
                             if (constructor.GetParameters().Length > 0)
@@ -347,25 +361,25 @@ namespace KieranCoppins.DecisionTreesEditor
                                 }
                             }
                         }
+                    }
 
-                        if (validEdge)
-                        {
-                            outputNode.ConnectedNodes.Add(inputNode);
-                            inputNode.ConnectedNodes.Add(outputNode);
-                            inputNode.title = inputNode.Node.GetTitle();
-                            inputNode.Description = inputNode.Node.GetDescription(inputNode);
-                            outputNode.title = outputNode.Node.GetTitle();
-                            outputNode.Description = outputNode.Node.GetDescription(outputNode);
-                            _tree.Inputs.Add(input);
+                    if (validEdge)
+                    {
+                        outputNode.ConnectedNodes.Add(inputNode);
+                        inputNode.ConnectedNodes.Add(outputNode);
+                        inputNode.title = inputNode.Node.GetTitle();
+                        inputNode.Description = inputNode.Node.GetDescription(inputNode);
+                        outputNode.title = outputNode.Node.GetTitle();
+                        outputNode.Description = outputNode.Node.GetDescription(outputNode);
+                        _tree.Inputs.Add(input);
 
-                            EditorUtility.SetDirty(inputNode.Node);
-                            EditorUtility.SetDirty(outputNode.Node);
-                            EditorUtility.SetDirty(_tree);
-                        }
-                        else
-                        {
-                            edgesToIgnore.Add(elem);
-                        }
+                        EditorUtility.SetDirty(inputNode.Node);
+                        EditorUtility.SetDirty(outputNode.Node);
+                        EditorUtility.SetDirty(_tree);
+                    }
+                    else
+                    {
+                        edgesToIgnore.Add(elem);
                     }
                 });
             }

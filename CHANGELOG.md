@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Colours depending on function data types
+- Colours depending on function data types. Default colour is blue
+- A tooltip appears over each port displaying the type they expect
+- Logic edges are denoted by being thicker
 
 ### Fixed
 
