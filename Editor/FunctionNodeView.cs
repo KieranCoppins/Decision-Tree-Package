@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 using KieranCoppins.DecisionTrees;
+using System.Data.Common;
+using System.Runtime.InteropServices;
 
 namespace KieranCoppins.DecisionTreesEditor
 {
@@ -18,10 +20,23 @@ namespace KieranCoppins.DecisionTreesEditor
 
             CreateInputPorts();
 
+            System.Type type = null;
+            System.Type current = function.GetType();
+            while (type == null && current != typeof(object))
+            {
+                if (current.IsGenericType)
+                {
+                    type = current;
+                }
+                current = current.BaseType;
+            }
+
             // Function nodes should only ever have 1 output node
-            Port port = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, GenericHelpers.GenericHelpers.GetGenericType(function));
+            Port port = InstantiatePort(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, type.GetGenericArguments()[0]);
             port.portName = "Output";
             port.name = "Output";
+            port.tooltip = type.GetGenericArguments()[0].ToString();
+            port.portColor = GetColorForType(type);
             OutputPorts.Add("Output", port);
             outputContainer.Add(port);
             AddToClassList("function");
@@ -45,6 +60,8 @@ namespace KieranCoppins.DecisionTreesEditor
                         Port port = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, parameter.ParameterType);
                         port.portName = parameter.Name;
                         port.name = parameter.Name;
+                        port.portColor = GetColorForType(parameter.ParameterType);
+                        port.tooltip = parameter.ParameterType.GetGenericArguments()[0].ToString();
                         InputPorts.Add(parameter.Name, port);
                         inputContainer.Add(port);
                     }

@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.2.0] - 2023-01-20
+
+### Added
+
+- Colours depending on function data types. Default colour is blue
+- A tooltip appears over each port displaying the type they expect
+- Logic edges are denoted by being thicker
+- New context menu option *"Open in IDE"* on nodes, opens the script for these nodes in your IDE
+
+### Changed
+
+- Removed context menu whilst in read-only mode
+
+### Fixed
+
+- Fixed Function nodes and parameter inputs of mismatching types being able to connect
+
 ## [1.1.1] - 2023-01-17
 
 ### Fixed

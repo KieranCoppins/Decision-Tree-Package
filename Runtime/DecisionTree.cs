@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
+using System.Data.Common;
 
 namespace KieranCoppins.DecisionTrees
 {
@@ -402,6 +403,21 @@ namespace KieranCoppins.DecisionTrees
     /// </summary>
     public abstract class BaseNodeView : Node
     {
+        /// <summary>
+        /// A dictionary containing datatype to colours
+        /// </summary>
+        public static IDictionary<Type, Color> TypeColourDictionary = new Dictionary<Type, Color>()
+        {
+            {typeof(float), new Color(.243f, .980f, .265f) },
+            {typeof(int), new Color(.243f, .980f, .265f) },
+            {typeof(decimal), new Color(.243f, .980f, .265f) },
+            {typeof(long), new Color(.243f, .980f, .265f) },
+            {typeof(bool), new Color(.980f, .243f, .243f)},
+            {typeof(string), new Color(.936f, .243f, .980f) },
+            {typeof(char), new Color(.936f, .243f, .980f) },
+            {typeof(Vector2), new Color(.690f, .980f, .243f) },
+            {typeof(Vector3), new Color(.690f, .980f, .243f) },
+        };
         public Action<BaseNodeView> OnNodeSelected { get; set; }
 
         /// <summary>
@@ -427,6 +443,8 @@ namespace KieranCoppins.DecisionTrees
         private readonly Label _descriptionLabel;
         private readonly Label _errorLabel;
         private readonly VisualElement _errorContainer;
+
+        public bool ReadOnly { get; set; }
 
         /// <summary>
         /// The description that is applied to the node view inside the visual editor
@@ -547,8 +565,24 @@ namespace KieranCoppins.DecisionTrees
             }
         }
 
+        protected static Color GetColorForType(Type type)
+        {
+            return TypeColourDictionary.ContainsKey(type.GetGenericArguments()[0]) ? TypeColourDictionary[type.GetGenericArguments()[0]] : new Color(.243f, .265f, .980f);
+        }
+        public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+        {
+            if (!ReadOnly)
+            {
+                // Add an option to be able to open the script of the Node in an IDE
+                evt.menu.AppendAction("Open in IDE", (a) => {
+                    string[] guids = AssetDatabase.FindAssets($"{Node.GetType().Name} t:script", null);
+                    if (guids.Length > 0)
+                        AssetDatabase.OpenAsset(MonoImporter.GetAtPath(AssetDatabase.GUIDToAssetPath(guids[0])).GetInstanceID());
+                });
+                base.BuildContextualMenu(evt);
+            }
+        }
     }
-
     public class EnumFlagsAttribute : PropertyAttribute
     {
 
