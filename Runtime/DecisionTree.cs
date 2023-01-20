@@ -572,7 +572,15 @@ namespace KieranCoppins.DecisionTrees
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
             if (!ReadOnly)
+            {
+                // Add an option to be able to open the script of the Node in an IDE
+                evt.menu.AppendAction("Open in IDE", (a) => {
+                    string[] guids = AssetDatabase.FindAssets($"{Node.GetType().Name} t:script", null);
+                    if (guids.Length > 0)
+                        AssetDatabase.OpenAsset(MonoImporter.GetAtPath(AssetDatabase.GUIDToAssetPath(guids[0])).GetInstanceID());
+                });
                 base.BuildContextualMenu(evt);
+            }
         }
     }
     public class EnumFlagsAttribute : PropertyAttribute

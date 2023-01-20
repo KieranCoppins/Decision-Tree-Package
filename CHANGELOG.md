@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Colours depending on function data types. Default colour is blue
 - A tooltip appears over each port displaying the type they expect
 - Logic edges are denoted by being thicker
+- New context menu option *"Open in IDE"* on nodes, opens the script for these nodes in your IDE
 
 ### Changed
 
