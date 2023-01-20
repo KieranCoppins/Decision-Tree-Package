@@ -144,6 +144,9 @@ namespace KieranCoppins.DecisionTreesEditor
 
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
+            if (_tree.IsClone)
+                return;
+
             Vector2 clickPoint = viewTransform.matrix.inverse.MultiplyPoint(evt.localMousePosition);
             GridBackground grid = contentContainer[0] as GridBackground;
             var types = TypeCache.GetTypesDerivedFrom<DecisionTreeEditorNodeBase>();
@@ -201,7 +204,10 @@ namespace KieranCoppins.DecisionTreesEditor
                 nodeView.capabilities = Capabilities.Selectable | Capabilities.Movable | Capabilities.Ascendable | Capabilities.Snappable;
 
             if (_tree.IsClone)
+            {
                 nodeView.capabilities = Capabilities.Selectable;
+                nodeView.ReadOnly = true;
+            }
 
             AddElement(nodeView);
         }
@@ -215,8 +221,13 @@ namespace KieranCoppins.DecisionTreesEditor
             FunctionNodeView nodeView = new(node);
             nodeView.OnNodeSelected = OnNodeSelected;
             nodeView.AddToClassList(SimpleNodeView ? "simple" : "complex");
+
             if (_tree.IsClone)
+            {
                 nodeView.capabilities = Capabilities.Selectable;
+                nodeView.ReadOnly = true;
+            }
+
             AddElement(nodeView);
         }
 

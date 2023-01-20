@@ -444,6 +444,8 @@ namespace KieranCoppins.DecisionTrees
         private readonly Label _errorLabel;
         private readonly VisualElement _errorContainer;
 
+        public bool ReadOnly { get; set; }
+
         /// <summary>
         /// The description that is applied to the node view inside the visual editor
         /// </summary>
@@ -566,6 +568,11 @@ namespace KieranCoppins.DecisionTrees
         protected static Color GetColorForType(Type type)
         {
             return TypeColourDictionary.ContainsKey(type.GetGenericArguments()[0]) ? TypeColourDictionary[type.GetGenericArguments()[0]] : new Color(.243f, .265f, .980f);
+        }
+        public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+        {
+            if (!ReadOnly)
+                base.BuildContextualMenu(evt);
         }
     }
     public class EnumFlagsAttribute : PropertyAttribute
