@@ -57,7 +57,7 @@ namespace KieranCoppins.DecisionTreesEditor
                 {
                     foreach (var parameter in constructor.GetParameters())
                     {
-                        Port port = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, parameter.ParameterType);
+                        Port port = InstantiatePort(Orientation.Vertical, Direction.Input, Port.Capacity.Single, parameter.ParameterType.GetGenericArguments()[0]);
                         port.portName = parameter.Name;
                         port.name = parameter.Name;
                         port.portColor = GetColorForType(parameter.ParameterType);
