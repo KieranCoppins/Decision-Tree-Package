@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.2.1] - 2024-07-23
+
+### Fixed
+
+- Fixed function node's parameter inputs of the same type being able to connect
+
 ## [1.2.0] - 2023-01-20
 
 ### Added
