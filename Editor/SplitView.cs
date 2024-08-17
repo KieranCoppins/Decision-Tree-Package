@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine.UIElements;
 namespace KieranCoppins.DecisionTreesEditor
 {
@@ -11,3 +12,4 @@ namespace KieranCoppins.DecisionTreesEditor
         }
     }
 }
+#endif

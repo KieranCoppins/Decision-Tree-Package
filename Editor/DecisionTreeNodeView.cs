@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor.Experimental.GraphView;
 using KieranCoppins.DecisionTrees;
 using UnityEngine.UIElements;
@@ -110,3 +111,4 @@ public class LogicPortType
 {
     public LogicPortType() { }
 }
+#endif
