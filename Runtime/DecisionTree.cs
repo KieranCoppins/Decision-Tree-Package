@@ -3,38 +3,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
-using UnityEngine.UIElements;
 using System.Data.Common;
+
+#if UNITY_EDITOR
+using UnityEngine.UIElements;
+using UnityEditor.Experimental.GraphView;
+#endif
 
 namespace KieranCoppins.DecisionTrees
 {
     [CreateAssetMenu(menuName = "Decision Tree/Decision Tree")]
     public class DecisionTree : ScriptableObject
     {
-        public Vector3 ViewPosition { 
-            get { return _viewPosition; } 
-            
-            set 
+#if UNITY_EDITOR
+        public Vector3 ViewPosition
+        {
+            get { return _viewPosition; }
+
+            set
             {
                 Undo.RecordObject(this, "Decision Tree (Change viewport location)");
-                _viewPosition = value; 
+                _viewPosition = value;
                 EditorUtility.SetDirty(this);
-            } 
+            }
         }
 
-        [HideInInspector] [SerializeField] private Vector3 _viewPosition = Vector3.zero;
+        [HideInInspector][SerializeField] private Vector3 _viewPosition = Vector3.zero;
 
-        public Vector3 ViewScale { 
-            get { return _viewScale; } 
-            set 
+        public Vector3 ViewScale
+        {
+            get { return _viewScale; }
+            set
             {
                 Undo.RecordObject(this, "Decision Tree (Change viewport location)");
                 _viewScale = value;
                 EditorUtility.SetDirty(this);
-            } 
+            }
         }
-
+#endif
         public bool IsClone { get; private set; }
 
         [HideInInspector][SerializeField] private Vector3 _viewScale = Vector3.one;
@@ -44,7 +50,10 @@ namespace KieranCoppins.DecisionTrees
         /// Editor Values
         // A list of nodes for our editor, they don't have to be linked to the tree
         [HideInInspector] public List<DecisionTreeEditorNodeBase> Nodes = new List<DecisionTreeEditorNodeBase>();
+
+#if UNITY_EDITOR
         [HideInInspector] public List<InputOutputPorts> Inputs = new List<InputOutputPorts>();
+#endif
 
         /// <summary>
         /// Run this tree
@@ -90,10 +99,11 @@ namespace KieranCoppins.DecisionTrees
             {
                 tree.Nodes.Add(n);
             });
-            tree.IsClone= true;
+            tree.IsClone = true;
             return tree;
         }
 
+#if UNITY_EDITOR
         /// <summary>
         /// Creates a new node of the given type, saves the asset and adds it to the tree.
         /// </summary>
@@ -130,6 +140,8 @@ namespace KieranCoppins.DecisionTrees
             Undo.DestroyObjectImmediate(node);
             AssetDatabase.SaveAssets();
         }
+#endif
+
     }
 
     /// <summary>
@@ -332,7 +344,7 @@ namespace KieranCoppins.DecisionTrees
 
         public override List<DecisionTreeEditorNodeBase> GetChildren() => new() { A, B };
     }
-
+#if UNITY_EDITOR
     /// <summary>
     /// A class that stores information about edges inside the map.
     /// </summary>
@@ -574,7 +586,8 @@ namespace KieranCoppins.DecisionTrees
             if (!ReadOnly)
             {
                 // Add an option to be able to open the script of the Node in an IDE
-                evt.menu.AppendAction("Open in IDE", (a) => {
+                evt.menu.AppendAction("Open in IDE", (a) =>
+                {
                     string[] guids = AssetDatabase.FindAssets($"{Node.GetType().Name} t:script", null);
                     if (guids.Length > 0)
                         AssetDatabase.OpenAsset(MonoImporter.GetAtPath(AssetDatabase.GUIDToAssetPath(guids[0])).GetInstanceID());
@@ -583,6 +596,15 @@ namespace KieranCoppins.DecisionTrees
             }
         }
     }
+
+#elif !UNITY_EDITOR
+    // This is a dummy class to allow the code to compile in a build
+    public abstract class BaseNodeView {
+        public string Description {get; set;}
+        public string Error {get; set;}
+    }
+#endif
+
     public class EnumFlagsAttribute : PropertyAttribute
     {
 

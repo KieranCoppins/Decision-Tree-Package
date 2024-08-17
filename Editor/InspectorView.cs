@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using UnityEngine.UIElements;
 using UnityEditor;
 using KieranCoppins.DecisionTrees;
@@ -33,3 +35,5 @@ namespace KieranCoppins.DecisionTreesEditor
         }
     }
 }
+
+#endif
