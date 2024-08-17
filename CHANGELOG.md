@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.3.0] - 2024-08-17
+
+### Added
+
+- UNITY_EDITOR preprocessor directives to editor only code
+
+### Fixed
+
+- Fixed experimental GraphView package being included in builds of projects with this package
+
 ## [1.2.1] - 2024-07-23
 
 ### Fixed
